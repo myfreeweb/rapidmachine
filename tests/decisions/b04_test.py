@@ -12,12 +12,14 @@ class b04(t.Test):
     
     def test_ok(self):
         self.env.data = 'foo'
+        self.env.headers['content-length'] = len(self.env.data)
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.response, 'yay good')
 
     def test_not_ok(self):
         self.env.data = 'foo' * 1024
+        self.env.headers['content-length'] = len(self.env.data)
         self.go()
         t.eq(self.rsp.status_code, 413)
         t.eq(self.rsp.response, [])

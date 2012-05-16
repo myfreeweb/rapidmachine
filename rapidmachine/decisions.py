@@ -130,8 +130,6 @@ def g11(res, req, rsp):
 
 def h07(res, req, rsp):
     "If-Match: * exists?"
-    # Need to recheck that if-match was an actual header
-    # because WebOb is says that '*' will match no header.
     return 'if-match' in req.headers and '*' in req.if_match
 
 def h10(res, req, rsp):
@@ -211,7 +209,7 @@ def l14(res, req, rsp):
 
 def l15(res, req, rsp):
     "If-Modified-Since > Now?"
-    return req.if_modified_since > datetime.datetime.now(webob.UTC)
+    return req.if_modified_since > datetime.datetime.utcnow()
 
 def l17(res, req, rsp):
     "Last-Modified > If-Modified-Since?"
@@ -231,7 +229,7 @@ def m16(res, req, rsp):
     return req.method == "DELETE"
 
 def m20(res, req, resp):
-    """Delete enacted immediayly?
+    """Delete enacted immediately?
     Also where DELETE is forced."""
     return res.delete_resource(req, resp)
 

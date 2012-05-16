@@ -23,7 +23,7 @@ class l17(t.Test):
 
     def test_unmodified(self):
         self.TestResource.modified = now
-        self.env.headers['if-modified-since'] = past
+        self.env.headers['if-modified-since'] = past.ctime()
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.last_modified, now)
@@ -31,6 +31,6 @@ class l17(t.Test):
     
     def test_modified(self):
         self.TestResource.modified = past
-        self.env.headers['if-modified-since'] = now
+        self.env.headers['if-modified-since'] = now.ctime()
         self.go()
         t.eq(self.rsp.status_code, 304)

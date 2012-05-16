@@ -41,6 +41,7 @@ class n11(t.Test):
         self.TestResource.create = True
         self.TestResource.location = None
         self.env.method = 'POST'
+        self.env.content_type = 'application/octet-stream'
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.response, 'created')
@@ -49,6 +50,7 @@ class n11(t.Test):
         self.TestResource.create = True
         self.TestResource.location = '/foo'
         self.env.method = 'POST'
+        self.env.content_type = 'application/octet-stream'
         self.go()
         t.eq(self.rsp.status_code, 303)
         t.eq(self.rsp.headers.get('location'), '/foo')
@@ -57,6 +59,7 @@ class n11(t.Test):
     def test_post_is_process(self):
         self.TestResource.create = False
         self.env.method = 'POST'
+        self.env.content_type = 'application/octet-stream'
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.headers.get('location'), None)
@@ -66,6 +69,7 @@ class n11(t.Test):
         self.TestResource.create = False
         self.TestResource.status = False
         self.env.method = 'POST'
+        self.env.content_type = 'application/octet-stream'
         self.go()
         self.TestResource.status = True
         t.eq(self.rsp.status_code, 500)

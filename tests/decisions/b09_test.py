@@ -6,7 +6,7 @@ class b09(t.Test):
         
         def malformed_request(self, req, rsp):
             try:
-                int(req.GET.get("value"))
+                int(req.args.get("value"))
                 return False
             except:
                 return True

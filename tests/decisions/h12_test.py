@@ -22,13 +22,13 @@ class h12(t.Test):
             return "foo"
 
     def test_unmodified(self):
-        self.env.headers['if-unmodified-since'] = future
+        self.env.headers['if-unmodified-since'] = future.ctime()
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.last_modified, now)
         t.eq(self.rsp.response, 'foo')
     
     def test_modified(self):
-        self.env.headers['if-unmodified-since'] = past
+        self.env.headers['if-unmodified-since'] = past.ctime()
         self.go()
         t.eq(self.rsp.status_code, 412)

@@ -12,6 +12,9 @@ class g11(t.Test):
         def delete_completed(self, req, rsp):
             return self.done
 
+        def delete_resource(self, req, rsp):
+            return True
+
         def resource_exists(self, req, rsp):
             return True
 

@@ -14,12 +14,6 @@ class g07(t.Test):
                 ('text/html', self.to_html),
                 ('text/plain', self.to_plain)
             ]
-
-        def encodings_provided(self, req, rsp):
-            return [
-                ('identity', lambda x: x),
-                ('gzip', lambda x: x)
-            ]
         
         def languages_provided(self, req, rsp):
             return ['en', 'en-gb', 'es']
@@ -41,7 +35,7 @@ class g07(t.Test):
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(sorted(self.rsp.vary), [
-            'Accept', 'Accept-Charset', 'Accept-Encoding',
+            'Accept', 'Accept-Charset',
             'Accept-Language', 'Cookie'
         ])
 

@@ -9,10 +9,10 @@ class d05(t.Test):
             return self.langs
 
         def to_html(self, req, rsp):
-            if rsp.content_language == ['en-gb']:
-                return "Favourite!"
-            else:
-                return "Favorite!"
+            if rsp.content_language:
+                if rsp.content_language[0] == 'en-gb':
+                    return "Favourite!"
+            return "Favorite!"
     
     def test_no_langs(self):
         self.TestResource.langs = None

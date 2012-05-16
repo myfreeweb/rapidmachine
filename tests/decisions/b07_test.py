@@ -19,5 +19,5 @@ class b07(t.Test):
     def test_not_ok(self):
         self.env.headers['cookie'] = 'bar'
         self.go()
-        t.eq(self.rsp.status_code, 413)
+        t.eq(self.rsp.status_code, 403)
         t.eq(self.rsp.response, [])
