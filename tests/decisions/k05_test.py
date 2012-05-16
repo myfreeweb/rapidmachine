@@ -21,12 +21,12 @@ class k05(t.Test):
     def test_not_moved(self):
         self.TestResource.moved = False
         self.go()
-        t.eq(self.rsp.status, '410 Gone')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 410)
+        t.eq(self.rsp.response, [])
     
     def test_moved(self):
         self.TestResource.moved = '/foo'
         self.go()
-        t.eq(self.rsp.status, '301 Moved Permanently')
+        t.eq(self.rsp.status_code, 301)
         t.eq(self.rsp.location, '/foo')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.response, [])

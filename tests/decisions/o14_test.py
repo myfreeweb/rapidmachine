@@ -20,14 +20,14 @@ class o14(t.Test):
 
     def test_ok(self):
         self.TestResource.conflict = False
-        self.req.method = 'PUT'
+        self.env.method = 'PUT'
         self.go()
-        t.eq(self.rsp.status, '204 No Content')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 204)
+        t.eq(self.rsp.response, [])
     
     def test_conflict(self):
         self.TestResource.conflict = True
-        self.req.method = 'PUT'
+        self.env.method = 'PUT'
         self.go()
-        t.eq(self.rsp.status, '409 Conflict')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 409)
+        t.eq(self.rsp.response, [])

@@ -12,11 +12,11 @@ class b11(t.Test):
     
     def test_ok(self):
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'nom nom')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'nom nom')
 
     def test_not_ok(self):
-        self.req = t.webob.Request.blank('/foo' * 40)
+        self.env.path = '/foo' * 40
         self.go()
-        t.eq(self.rsp.status, '414 Request URI Too Long')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 414)
+        t.eq(self.rsp.response, [])

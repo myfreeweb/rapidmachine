@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-
 import datetime
 import types
-
-import webob
-import webob.exc
+from werkzeug.exceptions import InternalServerError, UnsupportedMediaType
 
 def b03(res, req, rsp):
     "Options?"
@@ -69,7 +66,7 @@ def c03(res, req, rsp):
 def c04(res, req, rsp):
     "Acceptable media type available?"
     ctypes = [ctype for (ctype, func) in res.content_types_provided(req, rsp)]
-    ctype = req.accept.best_match(ctypes)
+    ctype = req.accept_mimetypes.best_match(ctypes)
     if ctype is None:
         return False
     rsp.content_type = ctype
@@ -83,7 +80,7 @@ def d05(res, req, rsp):
     "Accept-Language available?"
     langs = res.languages_provided(req, rsp)
     if langs is not None:
-        lang = req.accept_language.best_match(langs)
+        lang = req.accept_languages.best_match(langs)
         if lang is None:
             return False
         rsp.content_language = lang
@@ -97,7 +94,7 @@ def e06(res, req, rsp):
     "Acceptable charset available?"
     charsets = res.charsets_provided(req, rsp)
     if charsets is not None:
-        charset = req.accept_charset.best_match(charsets)
+        charset = req.accept_charsets.best_match(charsets)
         if charset is None:
             return False
         rsp.charset = charset
@@ -112,7 +109,7 @@ def f07(res, req, rsp):
     encodings = res.encodings_provided(req, rsp)
     if encodings is not None:
         encodings = [enc for (enc, func) in encodings]
-        enc = req.accept_encoding.best_match(encodings)
+        enc = req.accept_encodings.best_match(encodings)
         if enc is None:
             return False
         rsp.content_encoding = enc
@@ -269,7 +266,7 @@ def n11(res, req, rsp):
         handle_request_body(res, req, rsp)
     else:
         if not res.process_post(req, rsp):
-            raise webob.exc.HTTPInternalServerError("Failed to process POST.")
+            raise InternalServerError("Failed to process POST.")
         return False
     rsp.location = res.created_location(req, rsp)
     if rsp.location:
@@ -298,7 +295,7 @@ def o18(res, req, rsp):
 
 def o20(res, req, rsp):
     "Response includes entity?"
-    return bool(rsp.body)
+    return bool(rsp.response)
 
 def p03(res, req, rsp):
     "Conflict?"
@@ -324,7 +321,7 @@ def handle_request_body(res, req, rsp):
 
     func = first_match(res.content_types_accepted, req, rsp, mtype)
     if func is None:
-        raise webob.exc.HTTPUnsupportedMediaType()
+        raise UnsupportedMediaType()
 
     return func(req, rsp)
 
@@ -336,23 +333,17 @@ def handle_response_body(res, req, rsp):
     # Generate the body
     func = first_match(res.content_types_provided, req, rsp, rsp.content_type)
     if func is None:
-        raise webob.exc.HTTPInternalServerError()
+        raise InternalServerError()
     
-    body = func(req, rsp)
-
-    # If we're using a charset, make sure to use unicode_body.    
-    if rsp.charset:
-        rsp.unicode_body = unicode(body)
-    else:
-        rsp.body = body
+    rsp.response = unicode(func(req, rsp))
 
     # Handle our content encoding.
     encoding = rsp.content_encoding
     if encoding:
         func = first_match(res.encodings_provided, req, rsp, encoding)
         if func is None:
-            raise webob.exc.HTTPInternalServerError()
-        rsp.body = func(rsp.body)
+            raise InternalServerError()
+        rsp.response = func(rsp.response)
 
 TRANSITIONS = {
     b03: (200, c03), # Options?
@@ -423,12 +414,11 @@ def process(klass, req, rsp):
 
     state = b13
     while not isinstance(state, int):
-        #print state
         if state(res, req, rsp):
             state = TRANSITIONS[state][0]
         else:
             state = TRANSITIONS[state][1]
         if not isinstance(state, (int, types.FunctionType)):
-            raise webob.exc.HTTPServerError("Invalid state: %r" % state)
-    rsp.status = state
+            raise InternalServerError("Invalid state: %r" % state)
+    rsp.status_code = state
     return rsp

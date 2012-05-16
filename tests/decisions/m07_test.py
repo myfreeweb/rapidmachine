@@ -13,7 +13,7 @@ class m05(t.Test):
             return self.allow
         
         def process_post(self, req, rsp):
-            rsp.body = "processed"
+            rsp.response = "processed"
             return True
         
         def resource_exists(self, req, rsp):
@@ -24,14 +24,14 @@ class m05(t.Test):
 
     def test_allow_post(self):
         self.TestResource.allow = True
-        self.req.method = 'POST'
+        self.env.method = 'POST'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'processed')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'processed')
     
     def test_dont_allow(self):
         self.TestResource.allow = False
-        self.req.method = 'POST'
+        self.env.method = 'POST'
         self.go()
-        t.eq(self.rsp.status, '404 Not Found')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 404)
+        t.eq(self.rsp.response, [])

@@ -13,13 +13,13 @@ class b08(t.Test):
             return "nom nom"
     
     def test_ok(self):
-        self.req.headers['authorization'] = 'yay'
+        self.env.headers['authorization'] = 'yay'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'nom nom')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'nom nom')
 
     def test_not_ok(self):
         self.go()
-        t.eq(self.rsp.status, '401 Unauthorized')
+        t.eq(self.rsp.status_code, 401)
         t.eq(self.rsp.headers['www-authenticate'], 'oauth')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.response, [])

@@ -18,11 +18,11 @@ class k07(t.Test):
     def test_not_existed(self):
         self.TestResource.existed = False
         self.go()
-        t.eq(self.rsp.status, '404 Not Found')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 404)
+        t.eq(self.rsp.response, [])
     
     def test_existed(self):
         self.TestResource.existed = True
         self.go()
-        t.eq(self.rsp.status, '410 Gone')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 410)
+        t.eq(self.rsp.response, [])

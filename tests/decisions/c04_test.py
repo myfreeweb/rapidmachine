@@ -19,33 +19,32 @@ class c04(t.Test):
     def test_no_accept(self):
         # No Accept header means default to first specified.
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.content_type, 'application/json')
-        t.eq(self.rsp.body, '{"nom": "nom"}')
+        t.eq(self.rsp.response, '{"nom": "nom"}')
 
     def test_none_acceptable(self):
-        self.req.headers['accept'] = 'image/jpeg'
+        self.env.headers['accept'] = 'image/jpeg'
         self.go()
-        t.eq(self.rsp.status, '406 Not Acceptable')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 406)
 
     def test_json(self):
-        self.req.headers['accept'] = 'application/json'
+        self.env.headers['accept'] = 'application/json'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.content_type, 'application/json')
-        t.eq(self.rsp.body, '{"nom": "nom"}')
+        t.eq(self.rsp.response, '{"nom": "nom"}')
 
     def test_xml(self):
-        self.req.headers['accept'] = 'text/xml'
+        self.env.headers['accept'] = 'text/xml'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.content_type, 'text/xml')
-        t.eq(self.rsp.body, '<nom>nom</nom>')
+        t.eq(self.rsp.response, '<nom>nom</nom>')
     
     def test_choose_best(self):
-        self.req.headers['accept'] = 'text/xml;q=0.5, application/json;q=0.9'
+        self.env.headers['accept'] = 'text/xml;q=0.5, application/json;q=0.9'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.content_type, 'application/json')
-        t.eq(self.rsp.body, '{"nom": "nom"}')
+        t.eq(self.rsp.response, '{"nom": "nom"}')

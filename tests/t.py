@@ -1,19 +1,21 @@
 import unittest
-import webob
-import webob.exc
-
+from werkzeug.wrappers import Request, Response
+from werkzeug.test import EnvironBuilder
+from werkzeug.exceptions import HTTPException
 from rapidmachine import process, Resource
 
 class Test(unittest.TestCase):
     def setUp(self):
-        self.req = webob.Request.blank("/")
-        self.rsp = webob.Response()
+        self.env = EnvironBuilder()
+        self.rsp = Response()
 
     def go(self):
+        environ = self.env.get_environ()
         try:
+            self.req = Request(environ)
             process(self.TestResource, self.req, self.rsp)
-        except webob.exc.HTTPException, error:
-            self.rsp = error
+        except HTTPException, error:
+            self.rsp = error.get_response(environ)
 
 def eq(a, b):
     assert a == b, "%r != %r" % (a, b)

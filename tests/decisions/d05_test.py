@@ -16,53 +16,41 @@ class d05(t.Test):
     
     def test_no_langs(self):
         self.TestResource.langs = None
-        self.req.headers['accept-language'] = 'en;q=0.3, es'
+        self.env.headers['accept-language'] = 'en;q=0.3, es'
         self.go()
         self.TestResource.langs = ['en', 'en-gb']
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.content_language, None)
-        t.eq(self.rsp.body, 'Favorite!')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(len(self.rsp.content_language), 0)
+        t.eq(self.rsp.response, 'Favorite!')
     
     def test_none_acceptable(self):
-        self.req.headers['accept-language'] = 'es'
+        self.env.headers['accept-language'] = 'es'
         self.go()
-        t.eq(self.rsp.status, '406 Not Acceptable')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 406)
+        t.eq(self.rsp.response, [])
     
     def test_en_default(self):
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'Favorite!')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'Favorite!')
 
     def test_en(self):
-        self.req.headers['accept-language'] = 'en'
+        self.env.headers['accept-language'] = 'en'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.content_language, ['en'])
-        t.eq(self.rsp.body, 'Favorite!')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.content_language[0], 'en')
+        t.eq(self.rsp.response, 'Favorite!')
     
     def test_en_gb(self):
-        self.req.headers['accept-language'] = 'en-gb'
+        self.env.headers['accept-language'] = 'en-gb'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.content_language, ['en-gb'])
-        t.eq(self.rsp.body, 'Favourite!')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.content_language[0], 'en-gb')
+        t.eq(self.rsp.response, 'Favourite!')
     
     def test_choose_en(self):
-        self.req.headers['accept-language'] = 'en;q=0.9, en-gb;q=0.4'
+        self.env.headers['accept-language'] = 'en;q=0.9, en-gb;q=0.4'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.content_language, ['en'])
-        t.eq(self.rsp.body, 'Favorite!')
-    
-    # WebOb' fuzzy selection is either broken or I don't understand
-    # how it's supposed to work.
-    # def test_choose_en_fuzzy(self):
-    #     self.TestResource.langs = ['en-gb']
-    #     self.req.headers['accept-language'] = 'en'
-    #     self.go()
-    #     self.TestResource.langs = ['en', 'en-gb']
-    #     t.eq(self.rsp.status, '200 OK')
-    #     t.eq(self.rsp.content_language, ['en-gb'])
-    #     t.eq(self.rsp.body, 'Favourite!')
-        
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.content_language[0], 'en')
+        t.eq(self.rsp.response, 'Favorite!')

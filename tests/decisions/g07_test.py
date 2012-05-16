@@ -39,7 +39,7 @@ class g07(t.Test):
     def test_variances(self):
         self.TestResource.exists = True
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(sorted(self.rsp.vary), [
             'Accept', 'Accept-Charset', 'Accept-Encoding',
             'Accept-Language', 'Cookie'
@@ -48,6 +48,6 @@ class g07(t.Test):
     def test_resource_not_exists(self):
         self.TestResource.exists = False
         self.go()
-        t.eq(self.rsp.status, '404 Not Found')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 404)
+        t.eq(self.rsp.response, [])
         

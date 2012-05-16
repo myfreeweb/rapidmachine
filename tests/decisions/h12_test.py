@@ -1,9 +1,7 @@
 import datetime
 import t
 
-from webob import UTC
-
-now = datetime.datetime.now(UTC).replace(microsecond=0)
+now = datetime.datetime.utcnow().replace(microsecond=0)
 diff = datetime.timedelta(days=1)
 past = now - diff
 future = now + diff
@@ -24,13 +22,13 @@ class h12(t.Test):
             return "foo"
 
     def test_unmodified(self):
-        self.req.if_unmodified_since = future
+        self.env.headers['if-unmodified-since'] = future
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.last_modified, now)
-        t.eq(self.rsp.body, 'foo')
+        t.eq(self.rsp.response, 'foo')
     
     def test_modified(self):
-        self.req.if_unmodified_since = past
+        self.env.headers['if-unmodified-since'] = past
         self.go()
-        t.eq(self.rsp.status, '412 Precondition Failed')
+        t.eq(self.rsp.status_code, 412)

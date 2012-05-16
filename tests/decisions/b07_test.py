@@ -11,13 +11,13 @@ class b07(t.Test):
             return "nom nom"
     
     def test_ok(self):
-        self.req.headers['cookie'] = 'id=foo'
+        self.env.headers['cookie'] = 'id=foo'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'nom nom')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'nom nom')
 
     def test_not_ok(self):
-        self.req.headers['cookie'] = 'bar'
+        self.env.headers['cookie'] = 'bar'
         self.go()
-        t.eq(self.rsp.status, '403 Forbidden')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 413)
+        t.eq(self.rsp.response, [])

@@ -12,11 +12,11 @@ class b10(t.Test):
     
     def test_ok(self):
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'nom nom')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'nom nom')
 
     def test_not_ok(self):
-        self.req.method = 'POST'
+        self.env.method = 'POST'
         self.go()
-        t.eq(self.rsp.status, '405 Method Not Allowed')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 405)
+        t.eq(self.rsp.response, [])

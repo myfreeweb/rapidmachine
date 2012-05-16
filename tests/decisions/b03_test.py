@@ -1,4 +1,3 @@
-
 import t
 
 class b03(t.Test):
@@ -17,14 +16,14 @@ class b03(t.Test):
         self.go()
         t.eq(self.rsp.status, '200 OK')
         t.eq(self.rsp.headers.get('X-Noah'), None)
-        t.eq(self.rsp.body, 'Hello, world!')
+        t.eq(self.rsp.response, 'Hello, world!')
 
     def test_options(self):
-        self.req.method = 'OPTIONS'
+        self.env.method = 'OPTIONS'
         self.go()
         t.eq(self.rsp.status, '200 OK')
         t.eq(self.rsp.headers['X-Noah'], 'Awesome')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.response, [])
     
     # Fairly unrelated, but no good place to put this
     def test_non_unicode_body(self):
@@ -36,5 +35,5 @@ class b03(t.Test):
         self.go()
         self.TestResource.to_html = prev
         t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'Hi')
+        t.eq(self.rsp.response, 'Hi')
         

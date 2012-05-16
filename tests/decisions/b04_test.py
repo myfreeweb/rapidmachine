@@ -11,13 +11,13 @@ class b04(t.Test):
             return "yay good"
     
     def test_ok(self):
-        self.req.body = 'foo'
+        self.env.data = 'foo'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'yay good')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'yay good')
 
     def test_not_ok(self):
-        self.req.body = 'foo' * 1024
+        self.env.data = 'foo' * 1024
         self.go()
-        t.eq(self.rsp.status, '413 Request Entity Too Large')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 413)
+        t.eq(self.rsp.response, [])

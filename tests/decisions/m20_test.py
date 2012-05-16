@@ -20,14 +20,14 @@ class g11(t.Test):
 
     def test_done(self):
         self.TestResource.done = True
-        self.req.method = 'DELETE'
+        self.env.method = 'DELETE'
         self.go()
-        t.eq(self.rsp.status, '204 No Content')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 204)
+        t.eq(self.rsp.response, [])
     
     def test_not_done(self):
         self.TestResource.done = False
-        self.req.method = 'DELETE'
+        self.env.method = 'DELETE'
         self.go()
-        t.eq(self.rsp.status, '202 Accepted')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 202)
+        t.eq(self.rsp.response, [])

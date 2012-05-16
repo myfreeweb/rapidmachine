@@ -15,19 +15,19 @@ class g11(t.Test):
 
     def test_no_if_match(self):
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.etag, 'bar')
-        t.eq(self.rsp.body, 'foo')
+        t.eq(self.rsp.response, 'foo')
     
     def test_if_match_ok(self):
-        self.req.headers['if-match'] = 'bar'
+        self.env.headers['if-match'] = 'bar'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.etag, 'bar')
-        t.eq(self.rsp.body, 'foo')
+        t.eq(self.rsp.response, 'foo')
     
     def test_if_match_fail(self):
-        self.req.headers['if-match'] = 'baz'
+        self.env.headers['if-match'] = 'baz'
         self.go()
-        t.eq(self.rsp.status, '412 Precondition Failed')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 412)
+        t.eq(self.rsp.response, [])

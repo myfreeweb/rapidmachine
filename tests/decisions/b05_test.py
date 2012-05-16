@@ -11,13 +11,13 @@ class b05(t.Test):
             return "nom nom"
     
     def test_ok(self):
-        self.req.headers['content-type'] = 'text/plain'
+        self.env.headers['content-type'] = 'text/plain'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.body, 'nom nom')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, 'nom nom')
 
     def test_not_ok(self):
-        self.req.headers['content-type'] = 'application/json; charset=utf-8'
+        self.env.headers['content-type'] = 'application/json; charset=utf-8'
         self.go()
-        t.eq(self.rsp.status, '415 Unsupported Media Type')
-        t.eq(self.rsp.body, '')
+        t.eq(self.rsp.status_code, 415)
+        t.eq(self.rsp.response, [])

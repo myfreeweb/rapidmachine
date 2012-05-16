@@ -1,9 +1,7 @@
 import datetime
 import t
 
-from webob import UTC
-
-now = datetime.datetime.now(UTC).replace(microsecond=0)
+now = datetime.datetime.utcnow().replace(microsecond=0)
 diff = datetime.timedelta(days=1)
 past = now - diff
 future = now + diff
@@ -25,14 +23,14 @@ class l17(t.Test):
 
     def test_unmodified(self):
         self.TestResource.modified = now
-        self.req.if_modified_since = past
+        self.env.headers['if-modified-since'] = past
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.last_modified, now)
-        t.eq(self.rsp.body, 'foo')
+        t.eq(self.rsp.response, 'foo')
     
     def test_modified(self):
         self.TestResource.modified = past
-        self.req.if_modified_since = now
+        self.env.headers['if-modified-since'] = now
         self.go()
-        t.eq(self.rsp.status, '304 Not Modified')
+        t.eq(self.rsp.status_code, 304)
