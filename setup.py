@@ -1,50 +1,29 @@
-# -*- coding: utf-8 -
-#
-# This file is part of gunicorn released under the MIT license. 
-# See the NOTICE for more information.
+#!/usr/bin/env python
+import sys
+from distutils.core import setup
+from rapidmachine import __version__
 
+if sys.version < '2.5':
+    sys.exit('Python 2.5 or higher is required')
 
-import os
-from setuptools import setup, find_packages
-
-from pywebmachine import __version__
-
-setup(
-    name = 'pywebmachine',
-    version = __version__,
-
-    description = 'WSGI REST Toolkit',
-    long_description = file(
-        os.path.join(
-            os.path.dirname(__file__),
-            'README.rst'
-        )
-    ).read(),
-    
-    author = 'Paul J. Davis',
-    author_email = 'paul.joseph.davis@gmail.com',
-    license = 'MIT',
-    url = 'http://github.com/davisp/pywebmachine',
-
-    classifiers = [
-        'Development Status :: 4 - Beta',
-        'Environment :: Other Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: MacOS :: MacOS X',
-        'Operating System :: POSIX',
-        'Programming Language :: Python',
-        'Topic :: Internet',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    zip_safe = True,
-    packages = find_packages(exclude=['examples', 'tests']),
-    include_package_data = True,
-    
-    install_requires = [
-        'webob'
-    ],
-    
-    test_suite = 'nose.collector',
+setup(name="rapidmachine",
+      version=__version__,
+      description="A high-level web toolkit for Rapid API Development",
+#      long_description="""""",
+      license="Apache License 2.0",
+      author="myfreeweb",
+      author_email="floatboth@me.com",
+      url="https://github.com/myfreeweb/rapidmachine",
+      requires=["werkzeug", "urlobject"],
+      packages=["rapidmachine"],
+      keywords=["web", "rest", "http"],
+      classifiers=[
+        "Environment :: Web Environment",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Software Development :: Libraries",
+      ],
+      package_data={},
 )
