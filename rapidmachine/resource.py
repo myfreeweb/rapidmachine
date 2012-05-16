@@ -40,14 +40,6 @@ class Resource(object):
     def delete_resource(self, req, rsp):
         return False
 
-    def encodings_provided(self, req, rsp):
-        """\
-        return [("identity", lambda x: x)]
-
-        Returning None prevents the encoding negotiation logic.
-        """
-        return None
-
     def expires(self, req, rsp):
         return None
     

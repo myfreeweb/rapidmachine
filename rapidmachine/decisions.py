@@ -100,21 +100,6 @@ def e06(res, req, rsp):
         rsp.charset = charset
     return True
 
-def f06(res, req, rsp):
-    "Accept-Encoding exists?"
-    return "accept-encoding" in req.headers
-
-def f07(res, req, rsp):
-    "Acceptable encoding available?"
-    encodings = res.encodings_provided(req, rsp)
-    if encodings is not None:
-        encodings = [enc for (enc, func) in encodings]
-        enc = req.accept_encodings.best_match(encodings)
-        if enc is None:
-            return False
-        rsp.content_encoding = enc
-    return True
-
 def g07(res, req, rsp):
     "Resource exists?"
 
@@ -124,8 +109,6 @@ def g07(res, req, rsp):
         hdr.append("Accept")
     if len(res.charsets_provided(req, rsp) or []) > 1:
         hdr.append("Accept-Charset")
-    if len(res.encodings_provided(req, rsp) or []) > 1:
-        hdr.append("Accept-Encoding")
     if len(res.languages_provided(req, rsp) or []) > 1:
         hdr.append("Accept-Language")
     hdr.extend(res.variances(req, rsp))
@@ -337,14 +320,6 @@ def handle_response_body(res, req, rsp):
     
     rsp.response = unicode(func(req, rsp))
 
-    # Handle our content encoding.
-    encoding = rsp.content_encoding
-    if encoding:
-        func = first_match(res.encodings_provided, req, rsp, encoding)
-        if func is None:
-            raise InternalServerError()
-        rsp.response = func(rsp.response)
-
 TRANSITIONS = {
     b03: (200, c03), # Options?
     b04: (413, b03), # Request entity too large?
@@ -361,10 +336,8 @@ TRANSITIONS = {
     c04: (d04, 406), # Acceptable media type available?
     d04: (d05, e05), # Accept-Language exists?
     d05: (e05, 406), # Accept-Language available?
-    e05: (e06, f06), # Accept-Charset exists?
-    e06: (f06, 406), # Acceptable charset available?
-    f06: (f07, g07), # Accept-Encoding exists?
-    f07: (g07, 406), # Acceptable encoding available?
+    e05: (e06, g07), # Accept-Charset exists?
+    e06: (g07, 406), # Acceptable charset available?
     g07: (g08, h07), # Resource exists?
     g08: (g09, h10), # If-Match exists?
     g09: (h10, g11), # If-Match: * exists?
