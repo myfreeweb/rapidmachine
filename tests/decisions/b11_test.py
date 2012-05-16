@@ -13,7 +13,7 @@ class b11(t.Test):
     def test_ok(self):
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, 'nom nom')
+        t.eq(self.rsp.response, ['nom nom'])
 
     def test_not_ok(self):
         self.env.path = '/foo' * 40

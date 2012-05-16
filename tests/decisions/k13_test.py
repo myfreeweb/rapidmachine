@@ -25,4 +25,4 @@ class k13(t.Test):
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.etag, 'foo')
-        t.eq(self.rsp.response, 'bar')
+        t.eq(self.rsp.response, ['bar'])

@@ -27,7 +27,7 @@ class l17(t.Test):
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.last_modified, now)
-        t.eq(self.rsp.response, 'foo')
+        t.eq(self.rsp.response, ['foo'])
     
     def test_modified(self):
         self.TestResource.modified = past

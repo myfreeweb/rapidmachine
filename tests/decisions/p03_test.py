@@ -5,7 +5,7 @@ class p03(t.Test):
     class TestResource(t.Resource):
 
         def to_html(req, rsp):
-            rsp.response = "bar"
+            rsp.response = ["bar"]
             return True
 
         conflict = False
@@ -35,7 +35,7 @@ class p03(t.Test):
         self.env.content_type = 'text/html'
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, 'bar')
+        t.eq(self.rsp.response, ['bar'])
     
     def test_conflict(self):
         self.TestResource.conflict = True

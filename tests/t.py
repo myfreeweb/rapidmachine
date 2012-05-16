@@ -2,7 +2,8 @@ import unittest
 from werkzeug.wrappers import Request, Response
 from werkzeug.test import EnvironBuilder
 from werkzeug.exceptions import HTTPException
-from rapidmachine import process, Resource
+from rapidmachine import Resource
+from rapidmachine.decisions import process
 
 class Test(unittest.TestCase):
     def setUp(self):

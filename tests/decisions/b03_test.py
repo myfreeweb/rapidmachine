@@ -14,14 +14,14 @@ class b03(t.Test):
     
     def test_get(self):
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.headers.get('X-Noah'), None)
-        t.eq(self.rsp.response, 'Hello, world!')
+        t.eq(self.rsp.response, ['Hello, world!'])
 
     def test_options(self):
         self.env.method = 'OPTIONS'
         self.go()
-        t.eq(self.rsp.status, '200 OK')
+        t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.headers['X-Noah'], 'Awesome')
         t.eq(self.rsp.response, [])
     
@@ -34,6 +34,6 @@ class b03(t.Test):
         self.TestResource.to_html = my_html
         self.go()
         self.TestResource.to_html = prev
-        t.eq(self.rsp.status, '200 OK')
-        t.eq(self.rsp.response, 'Hi')
+        t.eq(self.rsp.status_code, 200)
+        t.eq(self.rsp.response, ['Hi'])
         

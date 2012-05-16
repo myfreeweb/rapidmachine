@@ -21,7 +21,7 @@ class e06(t.Test):
         self.TestResource.charsets = ['utf-8', 'iso-8859-1']
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.charset, None)
-        t.eq(self.rsp.response, 'ascii!')
+        t.eq(self.rsp.response, ['ascii!'])
     
     def test_none_acceptable(self):
         self.TestResource.charsets = ['utf-8']
@@ -36,18 +36,18 @@ class e06(t.Test):
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.charset, None)
-        t.eq(self.rsp.response, 'ascii!')
+        t.eq(self.rsp.response, ['ascii!'])
 
     def test_choose_utf_8(self):
         self.env.headers['accept-charset'] = 'utf-8'
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.charset, 'UTF-8')
-        t.eq(self.rsp.response, 'unicode!')
+        t.eq(self.rsp.response, ['unicode!'])
 
     def test_choose_iso_8859_1(self):
         self.env.headers['accept-charset'] = 'iso-8859-1;q=0.8, utf-8;q=0.2'
         self.go()
         t.eq(self.rsp.status_code, 200)
         t.eq(self.rsp.charset, 'iso-8859-1')
-        t.eq(self.rsp.response, 'ascii!')
+        t.eq(self.rsp.response, ['ascii!'])

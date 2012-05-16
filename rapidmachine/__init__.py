@@ -9,6 +9,7 @@ def devserve(app, port=5000):
 
 try:
     from rapidmachine.resource import Resource
+    from rapidmachine.app import App, V, R
 except ImportError:
     import traceback
     traceback.print_exc()

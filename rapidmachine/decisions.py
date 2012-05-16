@@ -316,7 +316,11 @@ def handle_response_body(res, req, rsp):
     if func is None:
         raise InternalServerError()
     
-    rsp.response = unicode(func(req, rsp))
+    body = func(req, rsp)
+    if isinstance(body, basestring):
+        rsp.data = body
+    else:
+        rsp.response = body
 
 TRANSITIONS = {
     b03: (200, c03), # Options?

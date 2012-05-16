@@ -19,7 +19,7 @@ class i04(t.Test):
             return False
 
         def from_html(self, req, rsp):
-            rsp.response = 'bar'
+            rsp.response = ['bar']
 
         def to_html(self, req, rsp):
             return 'foo'
@@ -30,7 +30,7 @@ class i04(t.Test):
         self.env.content_type = 'text/html'
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, 'bar')
+        t.eq(self.rsp.response, ['bar'])
     
     def test_moved(self):
         self.TestResource.moved = '/foo'
