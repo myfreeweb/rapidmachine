@@ -15,19 +15,21 @@ def R(route, res):
     return {"route": route, "res": res}
 
 def match(route, path):
+    "Match a path against a route. Returns a dict of values or False."
     matches = {}
     for routepart, pathpart in zip(route, path):
         if routepart != pathpart and routepart != "*":
             if isinstance(routepart, V):
                 try:
                     matches[routepart.name] = routepart.typey(pathpart)
-                except ValueError, e:
+                except ValueError, e: # wrong type
                     raise BadRequest()
-            else:
+            else: # didn't match
                 return False
     return matches
 
 class App(object):
+    "WSGI application which routes requests to Resources."
 
     handlers = []
 
