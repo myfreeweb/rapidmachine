@@ -13,15 +13,6 @@ class Resource(object):
 
     def auth_required(self, req, rsp):
         return True
-    
-    def charsets_provided(self, req, rsp):
-        """\
-        return [("iso-8859-1", lambda x: x)]
-        
-        Returning None prevents the character set negotiation
-        logic.
-        """
-        return None
 
     def content_types_accepted(self, req, rsp):
         return None

@@ -6,9 +6,6 @@ class g07(t.Test):
 
         exists = True
 
-        def charsets_provided(self, req, rsp):
-            return ['utf-8', 'iso-8859-1']
-
         def content_types_provided(self, req, rsp):
             return [
                 ('text/html', self.to_html),
@@ -34,10 +31,7 @@ class g07(t.Test):
         self.TestResource.exists = True
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(sorted(self.rsp.vary), [
-            'Accept', 'Accept-Charset',
-            'Accept-Language', 'Cookie'
-        ])
+        t.eq(sorted(self.rsp.vary), ['Accept', 'Accept-Language', 'Cookie'])
 
     def test_resource_not_exists(self):
         self.TestResource.exists = False

@@ -85,20 +85,6 @@ def d05(res, req, rsp):
             return False
         rsp.content_language = lang
     return True
-    
-def e05(res, req, rsp):
-    "Accept-Charset exists?"
-    return "accept-charset" in req.headers
-
-def e06(res, req, rsp):
-    "Acceptable charset available?"
-    charsets = res.charsets_provided(req, rsp)
-    if charsets is not None:
-        charset = req.accept_charsets.best_match(charsets)
-        if charset is None:
-            return False
-        rsp.charset = charset
-    return True
 
 def g07(res, req, rsp):
     "Resource exists?"
@@ -107,8 +93,6 @@ def g07(res, req, rsp):
     hdr = []
     if len(res.content_types_provided(req, rsp) or []) > 1:
         hdr.append("Accept")
-    if len(res.charsets_provided(req, rsp) or []) > 1:
-        hdr.append("Accept-Charset")
     if len(res.languages_provided(req, rsp) or []) > 1:
         hdr.append("Accept-Language")
     hdr.extend(res.variances(req, rsp))
@@ -336,10 +320,8 @@ TRANSITIONS = {
     b13: (b12, 503), # Service available?
     c03: (c04, d04), # Accept exists?
     c04: (d04, 406), # Acceptable media type available?
-    d04: (d05, e05), # Accept-Language exists?
-    d05: (e05, 406), # Accept-Language available?
-    e05: (e06, g07), # Accept-Charset exists?
-    e06: (g07, 406), # Acceptable charset available?
+    d04: (d05, g07), # Accept-Language exists?
+    d05: (g07, 406), # Accept-Language available?
     g07: (g08, h07), # Resource exists?
     g08: (g09, h10), # If-Match exists?
     g09: (h10, g11), # If-Match: * exists?
@@ -382,7 +364,7 @@ def process(klass, req, rsp):
     res = klass(req, rsp)
 
     # Setup some defaults
-    rsp.charset = None
+    rsp.charset = "UTF-8"
     ctypes = [ct for (ct, func) in (res.content_types_provided(req, rsp) or [])]
     if len(ctypes):
         rsp.content_type = ctypes[0]
