@@ -7,3 +7,4 @@ dist
 venv
 tests/*.err
 rapidmachine.egg-info
+docs
