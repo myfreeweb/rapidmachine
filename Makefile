@@ -2,9 +2,7 @@ test:
 	nosetests
 doc:
 	pycco example/index.py
-	cd docs
-	git commit -am "Update docs"
-	git push origin master
+	cd docs && git add . && git commit -m "Update docs" && git push origin gh-pages
 bootstrap:
 	git clone git@github.com:myfreeweb/rapidmachine.git docs
 	cd docs && git checkout gh-pages && cd ..
