@@ -5,14 +5,18 @@ from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import HTTPException, NotFound, BadRequest
 from urlobject import URLObject
 
+
 class V(object):
+
     def __init__(self, name, typey):
         assert type(typey) == type
         self.name = name
         self.typey = typey
 
+
 def R(route, res):
     return {"route": route, "res": res}
+
 
 def match(route, path):
     "Match a path against a route. Returns a dict of values or False."
@@ -22,13 +26,15 @@ def match(route, path):
             if isinstance(routepart, V):
                 try:
                     matches[routepart.name] = routepart.typey(pathpart)
-                except ValueError: # wrong type
+                except ValueError:  # wrong type
                     raise BadRequest()
-            else: # didn't match
+            else:  # didn't match
                 return False
     return matches
 
+
 class App(object):
+
     "WSGI application which routes requests to Resources."
 
     handlers = []
@@ -38,7 +44,7 @@ class App(object):
         print path
         for handler in self.handlers:
             route = handler["route"]
-            if len(route) == len(path): # stop early
+            if len(route) == len(path):  # stop early
                 try:
                     matches = match(route, path)
                     if matches != False:

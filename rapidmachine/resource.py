@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class Resource(object):
 
     def __init__(self, req, rsp):
@@ -27,25 +28,25 @@ class Resource(object):
 
     def delete_completed(self, req, rsp):
         return True
-    
+
     def delete_resource(self, req, rsp):
         return False
 
     def expires(self, req, rsp):
         return None
-    
+
     def finish_request(self, req, rsp):
         return True
 
     def forbidden(self, req, rsp):
         return False
-    
+
     def generate_etag(self, req, rsp):
         return None
 
     def is_authorized(self, req, rsp):
         return True
-    
+
     def is_conflict(self, req, rsp):
         return False
 
@@ -61,7 +62,7 @@ class Resource(object):
     def languages_provided(self, req, rsp):
         """\
         return ["en", "es", "en-gb"]
-        
+
         returning None short circuits the language negotiation
         """
         return None
@@ -74,10 +75,10 @@ class Resource(object):
 
     def moved_permanently(self, req, rsp):
         return False
-    
+
     def moved_temporarily(self, req, rsp):
         return False
-    
+
     def multiple_choices(self, req, rsp):
         return False
 
@@ -86,10 +87,10 @@ class Resource(object):
 
     def ping(self, req, rsp):
         return True
-    
+
     def post_is_create(self, req, rsp):
         return False
-    
+
     def previously_existed(self, req, rsp):
         return False
 
@@ -98,16 +99,16 @@ class Resource(object):
 
     def resource_exists(self, req, rsp):
         return True
-    
+
     def service_available(self, req, rsp):
         return True
 
     def uri_too_long(self, req, rsp):
         return False
-    
+
     def valid_content_headers(self, req, rsp):
         return True
-    
+
     def valid_entity_length(self, req, rsp):
         return True
 

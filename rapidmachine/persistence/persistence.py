@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+
 class Persistence(object):
+
     "Basic persistence interface"
 
     def __init__(self):

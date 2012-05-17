@@ -2,7 +2,9 @@
 
 from persistence import Persistence
 
+
 class MongoPersistence(Persistence):
+
     "PyMongo persistence adapter"
 
     def __init__(self, mongo, collection):

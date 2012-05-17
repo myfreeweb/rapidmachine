@@ -2,7 +2,9 @@
 
 from persistence import Persistence
 
+
 class MemoryPersistence(Persistence):
+
     "In-memory list persistence adapter, ONLY FOR DEVELOPMENT"
 
     def __init__(self):
@@ -32,7 +34,8 @@ class MemoryPersistence(Persistence):
             return None
 
     def replace(self, query, params):
-        self.db = map(lambda d: params if self.matches(d, query) else d, self.db)
+        self.db = map(lambda d: params if self.matches(d, query)
+                else d, self.db)
         # who cares about performance there? it's for development
         return self.read_one(query)
 

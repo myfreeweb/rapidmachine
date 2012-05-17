@@ -3,6 +3,9 @@ test:
 doc:
 	pycco example/index.py
 	cd docs && git add . && git commit -m "Update docs" && git push origin gh-pages
+lint:
+	pyflakes rapidmachine
+	pep8 rapidmachine
 bootstrap:
 	git clone git@github.com:myfreeweb/rapidmachine.git docs
 	cd docs && git checkout gh-pages && cd ..
