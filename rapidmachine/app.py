@@ -18,7 +18,7 @@ def match(route, path):
     matches = {}
     for routepart, pathpart in zip(route, path):
         if routepart != pathpart and routepart != "*":
-            if type(routepart) == V:
+            if isinstance(routepart, V):
                 try:
                     matches[routepart.name] = routepart.typey(pathpart)
                 except ValueError, e:
