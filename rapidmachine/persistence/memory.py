@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __init__ import Persistence
+from persistence import Persistence
 
 class MemoryPersistence(Persistence):
     "In-memory list persistence adapter, ONLY FOR DEVELOPMENT"

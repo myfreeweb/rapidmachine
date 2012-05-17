@@ -22,7 +22,7 @@ def match(route, path):
             if isinstance(routepart, V):
                 try:
                     matches[routepart.name] = routepart.typey(pathpart)
-                except ValueError, e: # wrong type
+                except ValueError: # wrong type
                     raise BadRequest()
             else: # didn't match
                 return False

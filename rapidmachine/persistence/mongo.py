@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __init__ import Persistence
+from persistence import Persistence
 
 class MongoPersistence(Persistence):
     "PyMongo persistence adapter"
