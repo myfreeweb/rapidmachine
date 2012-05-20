@@ -40,8 +40,8 @@ class App(object):
     handlers = []
 
     def dispatch_response(self, req):
-        path = URLObject(req.path).path.segments
-        print path
+        req.url_object = URLObject(req.path)
+        path = req.url_object.path.segments
         for handler in self.handlers:
             route = handler["route"]
             if len(route) == len(path):  # stop early

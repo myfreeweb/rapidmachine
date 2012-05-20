@@ -13,8 +13,6 @@ class MemoryPersistence(Persistence):
     def matches(self, d, query):
         for key, qval in query.iteritems():
             dval = d[key]
-            if type(dval) != type(qval):
-                return False
             if type(dval) == dict and not self.matches(dval, qval):
                 return False
             if dval != qval:

@@ -10,8 +10,9 @@ def devserve(app, port=5000):
 
 try:
     from rapidmachine.resource import Resource
+    from rapidmachine.documentresource import DocumentResource
     from rapidmachine.app import App, V, R
-    __all__ = ["devserve", "__version__", "App", "Resource", "V", "R"]
+    __all__ = ["devserve", "__version__", "App", "Resource", "DocumentResource", "V", "R"]
 except ImportError:
     import traceback
     traceback.print_exc()
