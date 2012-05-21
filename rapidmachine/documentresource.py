@@ -17,9 +17,6 @@ def errors_to_dict(errors):
 
 class DocumentResource(Resource):
 
-    def __init__(self, req, rsp):
-        pass
-
     def allowed_methods(self, req, rsp):
         return ["GET", "HEAD", "POST", "PUT", "DELETE"]
 
@@ -48,6 +45,8 @@ class DocumentResource(Resource):
         return json.dumps(self.data)
 
     def resource_exists(self, req, rsp):
+        # Not using dictshield to cut private fields,
+        # because the database can filter.
         if len(req.matches) == 0:  # read index / create
             if req.method == 'GET':
                 self.data = self.persistence.read_many(req.matches,
