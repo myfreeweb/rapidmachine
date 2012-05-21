@@ -25,13 +25,13 @@ class MemoryPersistence(Persistence):
     def read_many(self, query, fields=None):
         result = [d for d in self.db if self.matches(d, query)]
         if fields:
-            result = [dict([i for i in d.iteritems() if k in fields])
+            result = [dict([(k, v) for (k, v) in d.iteritems() if k in fields])
                     for d in result]
         return result
 
-    def read_one(self, query):
+    def read_one(self, query, fields=None):
         try:
-            return self.read_many(query)[0]
+            return self.read_many(query, fields)[0]
         except IndexError:
             return None
 

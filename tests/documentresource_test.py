@@ -53,6 +53,12 @@ class AppTest(t.Test):
         t.eq(rsp.status_code, 200)
         t.eq(json.loads(rsp.data), {"title": "Hello", "body": "Hello World!"})
 
+    def test_read_index(self):
+        rsp = self.client.get('/posts',
+                headers={'Accept': 'application/json'})
+        t.eq(rsp.status_code, 200)
+        t.eq(json.loads(rsp.data), [{"title": "Hello", "body": "Hello World!"}])
+
     def test_read_invalid(self):
         rsp = self.client.get('/posts/Goodbye',
                 headers={'Accept': 'application/json'})
