@@ -40,7 +40,7 @@ class App(object):
     handlers = []
 
     def dispatch_response(self, req):
-        req.url_object = URLObject(req.path)
+        req.url_object = URLObject(req.url)
         path = req.url_object.path.segments
         for handler in self.handlers:
             route = handler["route"]

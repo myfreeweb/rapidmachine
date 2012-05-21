@@ -8,6 +8,10 @@ from dictshield.document import Document
 from dictshield.fields import StringField
 
 
+ajson = {'Accept': 'application/json'}
+mp = MemoryPersistence()
+
+
 class Post(Document):
     _public_fields = ['title', 'body']
     title = StringField(max_length=64)
@@ -16,8 +20,9 @@ class Post(Document):
 
 class PostResource(DocumentResource):
     document    = Post
-    persistence = MemoryPersistence()
+    persistence = mp
     pk          = 'title'
+    default_per_page = 5
 
 
 class TestApp(App):
@@ -26,6 +31,7 @@ class TestApp(App):
         R(['posts', V('title', str)], PostResource),
         R(['posts.schema'], PostResource.schema_resource()),
     ]
+
 
 class AppTest(t.Test):
 
@@ -49,24 +55,32 @@ class AppTest(t.Test):
         t.eq(json.loads(rsp.data)["errors"], {"title": ["String value is too long"]})
 
     def test_read_valid(self):
-        rsp = self.client.get('/posts/Hello',
-                headers={'Accept': 'application/json'})
+        rsp = self.client.get('/posts/Hello', headers=ajson)
         t.eq(rsp.status_code, 200)
         t.eq(json.loads(rsp.data), {"title": "Hello", "body": "Hello World!"})
 
     def test_read_index(self):
-        rsp = self.client.get('/posts',
-                headers={'Accept': 'application/json'})
+        rsp = self.client.get('/posts', headers=ajson)
         t.eq(rsp.status_code, 200)
         t.eq(json.loads(rsp.data), [{"title": "Hello", "body": "Hello World!"}])
 
     def test_read_invalid(self):
-        rsp = self.client.get('/posts/Goodbye',
-                headers={'Accept': 'application/json'})
+        rsp = self.client.get('/posts/Goodbye', headers=ajson)
         t.eq(rsp.status_code, 404)
 
     def test_read_schema(self):
-        rsp = self.client.get('/posts.schema',
-                headers={'Accept': 'application/json'})
+        rsp = self.client.get('/posts.schema', headers=ajson)
         t.eq(json.loads(rsp.data)['type'], 'object')
         t.eq(rsp.status_code, 200)
+
+    def test_read_paginated(self):
+        for n in range(0, 100):
+            mp.create({'title': 'yo', 'body': 'Hello' * n})
+        rsp = self.client.get('/posts', headers=ajson)
+        data = json.loads(rsp.data)
+        t.eq(len(data), 5)
+        t.eq(data[4]['body'], 'HelloHelloHello')
+        rsp = self.client.get('/posts?page=2', headers=ajson)
+        data = json.loads(rsp.data)
+        t.eq(len(data), 5)
+        t.eq(data[0]['body'], 'HelloHelloHelloHello')

@@ -17,6 +17,12 @@ def errors_to_dict(errors):
 
 class DocumentResource(Resource):
 
+    def __init__(self, req, rsp):
+        if not hasattr(self, 'default_per_page'):
+            self.default_per_page = 20
+        if not hasattr(self, 'max_per_page'):
+            self.max_per_page = 100
+
     def allowed_methods(self, req, rsp):
         return ["GET", "HEAD", "POST", "PUT", "DELETE"]
 
@@ -47,18 +53,34 @@ class DocumentResource(Resource):
     def to_json(self, req, rsp):
         return json.dumps(self.data)
 
+    def paginate(self, req, rsp):
+        qs = req.url_object.query.dict
+        per_page = int(qs['per_page']) if 'per_page' in qs else self.default_per_page
+        if per_page > self.max_per_page:
+            per_page = self.default_per_page
+        page = int(qs['page']) if 'page' in qs else 1
+        skip = per_page * (page - 1)
+        return (skip, per_page, page)
+
     def resource_exists(self, req, rsp):
         # Not using dictshield to cut private fields,
         # because the database can filter.
         if len(req.matches) == 0:  # read index / create
             if req.method == "GET":
+                (skip, limit, page) = self.paginate(req, rsp)
                 self.data = self.persistence.read_many(req.matches,
-                    fields=self.document._public_fields)
-            return True
+                    fields=self.document._public_fields,
+                    skip=skip, limit=limit)
+                if len(self.data) == 0 and page != 1:
+                    raise JSONHTTPException(404, {"message": "Page not found"})
         else:  # read/update/delete entry
             self.data = self.persistence.read_one(req.matches,
                     fields=self.document._public_fields)
-            return bool(self.data)
+            if not self.data:
+                raise JSONHTTPException(404, {"message": "Document not found"})
+        # Not returning false, because we don't want html for 404s.
+        # Raising exceptions instead.
+        return True
 
     def post_is_create(self, req, rsp):
         return True
