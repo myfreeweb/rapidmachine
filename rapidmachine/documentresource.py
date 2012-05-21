@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from math import ceil
 from resource import Resource
 from exceptions import JSONHTTPException
 from collections import defaultdict
@@ -22,6 +23,7 @@ class DocumentResource(Resource):
             self.default_per_page = 20
         if not hasattr(self, 'max_per_page'):
             self.max_per_page = 100
+        self.links = {}
 
     def allowed_methods(self, req, rsp):
         return ["GET", "HEAD", "POST", "PUT", "DELETE"]
@@ -51,7 +53,12 @@ class DocumentResource(Resource):
             })
 
     def to_json(self, req, rsp):
+        self.link_header(req, rsp)
         return json.dumps(self.data)
+
+    def link_header(self, req, rsp):
+        rsp.headers['Link'] = ', '.join(['<%s>; rel="%s"' % (v, k)
+            for (k, v) in self.links.iteritems()])
 
     def paginate(self, req, rsp):
         qs = req.url_object.query.dict
@@ -71,8 +78,15 @@ class DocumentResource(Resource):
                 self.data = self.persistence.read_many(req.matches,
                     fields=self.document._public_fields,
                     skip=skip, limit=limit)
+                # First page should return [] and not 404 if there's nothing
                 if len(self.data) == 0 and page != 1:
                     raise JSONHTTPException(404, {"message": "Page not found"})
+                u = req.url_object
+                pages = ceil(self.persistence.count() / float(limit))
+                if page > 1:
+                    self.links['prev'] = u.set_query_param('page', str(page-1))
+                if page < pages:
+                    self.links['next'] = u.set_query_param('page', str(page+1))
         else:  # read/update/delete entry
             self.data = self.persistence.read_one(req.matches,
                     fields=self.document._public_fields)

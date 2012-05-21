@@ -25,3 +25,6 @@ class Persistence(object):
 
     def delete(self, query):
         raise NotImplemented
+
+    def count(self):
+        raise NotImplemented

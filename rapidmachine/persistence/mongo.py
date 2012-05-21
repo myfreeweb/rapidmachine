@@ -32,3 +32,6 @@ class MongoPersistence(Persistence):
 
     def delete(self, query):
         return self.db.remove(query)
+
+    def count(self):
+        return self.db.count()

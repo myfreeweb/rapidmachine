@@ -51,3 +51,6 @@ class MemoryPersistence(Persistence):
 
     def delete(self, query):
         self.db = filter(lambda d: not self.matches(d, query), self.db)
+
+    def count(self):
+        return len(self.db)

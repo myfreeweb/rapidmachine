@@ -74,13 +74,20 @@ class AppTest(t.Test):
         t.eq(rsp.status_code, 200)
 
     def test_read_paginated(self):
-        for n in range(0, 100):
+        for n in range(0, 11):
             mp.create({'title': 'yo', 'body': 'Hello' * n})
         rsp = self.client.get('/posts', headers=ajson)
         data = json.loads(rsp.data)
         t.eq(len(data), 5)
         t.eq(data[4]['body'], 'HelloHelloHello')
+        t.eq(rsp.headers['link'], '<http://localhost/posts?page=2>; rel="next"')
+        
         rsp = self.client.get('/posts?page=2', headers=ajson)
         data = json.loads(rsp.data)
         t.eq(len(data), 5)
         t.eq(data[0]['body'], 'HelloHelloHelloHello')
+        t.eq(rsp.headers['link'], '<http://localhost/posts?page=1>; rel="prev", <http://localhost/posts?page=3>; rel="next"')
+
+        rsp = self.client.get('/posts?page=3', headers=ajson)
+        data = json.loads(rsp.data)
+        t.eq(rsp.headers['link'], '<http://localhost/posts?page=2>; rel="prev"')
