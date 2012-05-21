@@ -22,8 +22,8 @@ class MemoryPersistence(Persistence):
     def create(self, params):
         return self.db.append(params)
 
-    def read_many(self, query, fields=None):
-        result = [d for d in self.db if self.matches(d, query)]
+    def read_many(self, query, fields=None, skip=0, limit=0):
+        result = [d for d in self.db[skip:][:limit] if self.matches(d, query)]
         if fields:
             result = [dict([(k, v) for (k, v) in d.iteritems() if k in fields])
                     for d in result]

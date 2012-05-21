@@ -14,7 +14,7 @@ class Persistence(object):
     def read_one(self, query, fields=None):
         raise NotImplemented
 
-    def read_many(self, query, fields=None):
+    def read_many(self, query, fields=None, skip=0, limit=0):
         raise NotImplemented
 
     def replace(self, query, params):
