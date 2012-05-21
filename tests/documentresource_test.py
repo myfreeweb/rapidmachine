@@ -23,7 +23,8 @@ class PostResource(DocumentResource):
 class TestApp(App):
     handlers = [
         R(['posts'], PostResource),
-        R(['posts', V('title', str)], PostResource)
+        R(['posts', V('title', str)], PostResource),
+        R(['posts.schema'], PostResource.schema_resource()),
     ]
 
 class AppTest(t.Test):
@@ -63,3 +64,9 @@ class AppTest(t.Test):
         rsp = self.client.get('/posts/Goodbye',
                 headers={'Accept': 'application/json'})
         t.eq(rsp.status_code, 404)
+
+    def test_read_schema(self):
+        rsp = self.client.get('/posts.schema',
+                headers={'Accept': 'application/json'})
+        t.eq(json.loads(rsp.data)['type'], 'object')
+        t.eq(rsp.status_code, 200)

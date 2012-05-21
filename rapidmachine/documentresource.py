@@ -48,7 +48,7 @@ class DocumentResource(Resource):
         # Not using dictshield to cut private fields,
         # because the database can filter.
         if len(req.matches) == 0:  # read index / create
-            if req.method == 'GET':
+            if req.method == "GET":
                 self.data = self.persistence.read_many(req.matches,
                     fields=self.document._public_fields)
             return True
@@ -64,3 +64,17 @@ class DocumentResource(Resource):
         inst = self.doc_instance.to_python()
         self.persistence.create(inst)
         return req.url_object.add_path_segment(inst[self.pk])
+
+    @classmethod
+    def schema_resource(self):
+        schema = self.document.to_jsonschema()
+
+        class JSONSchemaResource(Resource):
+
+            def content_types_provided(self, req, rsp):
+                return [("application/json", self.to_json)]
+
+            def to_json(self, req, rsp):
+                return schema
+
+        return JSONSchemaResource
