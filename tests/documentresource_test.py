@@ -45,8 +45,8 @@ class AppTest(t.Test):
     def test_create_invalid_data(self):
         rsp = self.client.post('/posts', content_type='application/json',
                 data='{"title":"%s","body":"Hello World!"}' % ('Hello' * 128))
-        t.eq(rsp.status_code, 400)
-        t.eq(rsp.data, '{"title": ["String value is too long"]}')
+        t.eq(rsp.status_code, 422)
+        t.eq(json.loads(rsp.data)["errors"], {"title": ["String value is too long"]})
 
     def test_read_valid(self):
         rsp = self.client.get('/posts/Hello',

@@ -34,12 +34,15 @@ class DocumentResource(Resource):
         try:
             data = json.loads(req.data)
         except ValueError:
-            raise JSONHTTPException(400, {"error": "Invalid JSON"})
+            raise JSONHTTPException(400, {"message": "Invalid JSON"})
         ex = self.document.validate_class_fields(data, validate_all=True)
         if len(ex) == 0:
             self.doc_instance = self.document(**data)
         else:
-            raise JSONHTTPException(400, errors_to_dict(ex))
+            raise JSONHTTPException(422, {
+                "message": "Validation Failed",
+                "errors": errors_to_dict(ex)
+            })
 
     def to_json(self, req, rsp):
         return json.dumps(self.data)
