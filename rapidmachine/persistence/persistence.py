@@ -11,10 +11,10 @@ class Persistence(object):
     def create(self, params):
         raise NotImplemented
 
-    def read_one(self, query):
+    def read_one(self, query, fields=None):
         raise NotImplemented
 
-    def read_many(self, query):
+    def read_many(self, query, fields=None):
         raise NotImplemented
 
     def replace(self, query, params):

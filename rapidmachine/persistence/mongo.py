@@ -14,11 +14,11 @@ class MongoPersistence(Persistence):
         objid = self.db.insert(params)
         return self.read_one(objid)
 
-    def read_one(self, query):
-        return self.db.find_one(query)
+    def read_one(self, query, fields=None):
+        return self.db.find_one(query, fields=fields)
 
-    def read_many(self, query):
-        return self.db.find(query)
+    def read_many(self, query, fields=None):
+        return self.db.find(query, fields=fields)
 
     def replace(self, query, params):
         self.db.update(query, params)
