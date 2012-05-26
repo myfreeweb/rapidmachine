@@ -102,7 +102,7 @@ class DocumentResource(Resource):
                 self.links['prev'] = u.set_query_param('page', str(page - 1))
             if page < pages:
                 self.links['next'] = u.set_query_param('page', str(page + 1))
-        else:  # read/update/delete entry
+        elif len(req.matches) > 0:  # read/update/delete entry
             self.data = self.persistence.read_one(req.matches,
                     fields=self.document._public_fields)
             if not self.data:
