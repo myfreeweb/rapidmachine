@@ -77,7 +77,8 @@ class DocumentResource(Resource):
 
     def paginate(self, req, rsp):
         qs = req.url_object.query.dict
-        per_page = int(qs['per_page']) if 'per_page' in qs else self.default_per_page
+        per_page = int(qs['per_page']) if 'per_page' in qs \
+                else self.default_per_page
         if per_page > self.max_per_page:
             per_page = self.default_per_page
         page = int(qs['page']) if 'page' in qs else 1
@@ -87,21 +88,20 @@ class DocumentResource(Resource):
     def resource_exists(self, req, rsp):
         # Not using dictshield to cut private fields,
         # because the database can filter.
-        if len(req.matches) == 0:  # read index / create
-            if req.method == "GET":
-                (skip, limit, page) = self.paginate(req, rsp)
-                self.data = self.persistence.read_many(req.matches,
-                    fields=self.document._public_fields,
-                    skip=skip, limit=limit)
-                # First page should return [] and not 404 if there's nothing
-                if len(self.data) == 0 and page != 1:
-                    raise JSONHTTPException(404, {"message": "Page not found"})
-                u = req.url_object
-                pages = ceil(self.persistence.count() / float(limit))
-                if page > 1:
-                    self.links['prev'] = u.set_query_param('page', str(page-1))
-                if page < pages:
-                    self.links['next'] = u.set_query_param('page', str(page+1))
+        if len(req.matches) == 0 and req.method == "GET":
+            (skip, limit, page) = self.paginate(req, rsp)
+            self.data = self.persistence.read_many(req.matches,
+                fields=self.document._public_fields,
+                skip=skip, limit=limit)
+            # First page should return [] and not 404 if there's nothing
+            if len(self.data) == 0 and page != 1:
+                raise JSONHTTPException(404, {"message": "Page not found"})
+            u = req.url_object
+            pages = ceil(self.persistence.count() / float(limit))
+            if page > 1:
+                self.links['prev'] = u.set_query_param('page', str(page - 1))
+            if page < pages:
+                self.links['next'] = u.set_query_param('page', str(page + 1))
         else:  # read/update/delete entry
             self.data = self.persistence.read_one(req.matches,
                     fields=self.document._public_fields)

@@ -49,7 +49,7 @@ class Resource(object):
           ("application/json", self.to_json)
         ]
         """
-       return [
+        return [
             ("text/html", self.to_html)
         ]
 
@@ -147,7 +147,10 @@ class Resource(object):
         return False
 
     def process_post(self, req, rsp):
-        "Processes POST requests. Only executed if post_is_create returns False."
+        """
+        Processes POST requests.
+        Only executed if post_is_create returns False.
+        """
         return False
 
     def resource_exists(self, req, rsp):
