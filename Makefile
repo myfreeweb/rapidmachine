@@ -1,8 +1,5 @@
 test:
 	nosetests
-doc:
-	pycco example/index.py
-	cd docs && git add . && git commit -m "Update docs" && git push origin gh-pages
 lint:
 	pyflakes rapidmachine
 	pep8 rapidmachine
