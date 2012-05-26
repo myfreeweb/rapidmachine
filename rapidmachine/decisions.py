@@ -68,7 +68,7 @@ def b12(res, req, rsp):
 
 def b13(res, req, rsp):
     "Service available?"
-    return res.ping(req, rsp) and res.service_available(req, rsp)
+    return res.service_available(req, rsp)
 
 
 def c03(res, req, rsp):
