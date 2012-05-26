@@ -8,6 +8,10 @@ from collections import defaultdict
 
 
 def errors_to_dict(errors):
+    """
+    Turns a list of dictshield errors into a nice dict of errors,
+    grouped by field.
+    """
     # WTF, dictshield
     result = defaultdict(list)
     for error in errors:
@@ -17,6 +21,16 @@ def errors_to_dict(errors):
 
 
 class DocumentResource(Resource):
+    """
+    A Resource with CRUD logic already implemented. You just have to set these
+    attributes:
+    * document = a dictshield.document.Document
+    * persistence = a rapidmachine.persistence.Persistence
+
+    You also may override pagination settings:
+    * default_per_page (default is 20)
+    * max_per_page (default is 100)
+    """
 
     def __init__(self, req, rsp):
         if not hasattr(self, 'default_per_page'):
@@ -57,6 +71,7 @@ class DocumentResource(Resource):
         return json.dumps(self.data)
 
     def link_header(self, req, rsp):
+        "Builds the Link header from self.links"
         rsp.headers['Link'] = ', '.join(['<%s>; rel="%s"' % (v, k)
             for (k, v) in self.links.iteritems()])
 
@@ -106,6 +121,7 @@ class DocumentResource(Resource):
 
     @classmethod
     def schema_resource(self):
+        "Returns a resource which returns the JSON Schema of self.document"
         schema = self.document.to_jsonschema()
 
         class JSONSchemaResource(Resource):
