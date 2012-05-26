@@ -26,6 +26,8 @@ class DocumentResource(Resource):
     attributes:
     * document = a dictshield.document.Document
     * persistence = a rapidmachine.persistence.Persistence
+    * pk = a string -- the field of Document that's the primary key
+      (used to construct URIs for redirection, eg. on POSTs)
 
     You also may override pagination settings:
     * default_per_page (default is 20)
