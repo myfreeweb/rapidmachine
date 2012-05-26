@@ -32,11 +32,10 @@ class DocumentResource(Resource):
     * max_per_page (default is 100)
     """
 
+    default_per_page = 20
+    max_per_page     = 100
+
     def __init__(self, req, rsp):
-        if not hasattr(self, 'default_per_page'):
-            self.default_per_page = 20
-        if not hasattr(self, 'max_per_page'):
-            self.max_per_page = 100
         self.links = {}
 
     def allowed_methods(self, req, rsp):
