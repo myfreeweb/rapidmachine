@@ -38,15 +38,12 @@ class MemoryPersistence(Persistence):
             return None
 
     def replace(self, query, params):
-        self.db = map(lambda d: params if self.matches(d, query)
-                else d, self.db)
-        # who cares about performance there? it's for development
+        self.db = [params if self.matches(d, query) else d for d in self.db]
         return self.read_one(query)
 
     def update(self, query, params):
-        self.db = map(lambda d: dict(d.items() + params.items()) if
-                self.matches(d, query) else d, self.db)
-        # who cares about performance there? it's for development
+        self.db = [dict(d.items() + params.items()) if self.matches(d, query) \
+                else d for d in self.db]
         return self.read_one(query)
 
     def delete(self, query):
