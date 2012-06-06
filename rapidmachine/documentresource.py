@@ -108,7 +108,7 @@ class DocumentResource(Resource):
         return True
 
     def created_location(self, req, rsp):
-        return self.created_loc
+        return req.url_object.add_path_segment(self.doc_instance[self.pk])
 
     def delete_resource(self, req, rsp):
         self.delete(req, rsp)
@@ -117,6 +117,7 @@ class DocumentResource(Resource):
     # DocumentResource layer
 
     def raise_error(self, code, data):
+        "Shorthand for raising FormattedHTTPException."
         self.data = data
         raise FormattedHTTPException(code)
 
@@ -135,7 +136,7 @@ class DocumentResource(Resource):
                 "errors": errors_to_dict(ex)
             })
         if self.is_index:
-            self.created_loc = self.create(req, rsp)
+            self.create(req, rsp)
         else:
             self.update(req, rsp)
 
@@ -145,6 +146,10 @@ class DocumentResource(Resource):
             for (k, v) in self.links.iteritems()])
 
     def paginate(self, req, rsp):
+        """
+        Returns pagination data from current request:
+        how many entries to skip, how many to show per page, the current page.
+        """
         qs = req.url_object.query.dict
         per_page = int(qs['per_page']) if 'per_page' in qs \
                 else self.default_per_page
@@ -157,7 +162,6 @@ class DocumentResource(Resource):
     def create(self, req, rsp):
         inst = self.doc_instance.to_python()
         self.persistence.create(inst)
-        return req.url_object.add_path_segment(inst[self.pk])
 
     def read_index(self, req, rsp):
         # TODO: what if we need private fields? cut on to_json, etc.
