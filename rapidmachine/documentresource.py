@@ -64,7 +64,8 @@ class DocumentResource(Resource):
     def allowed_methods(self, req, rsp):
         """
         Decides whether the requested resource is the index or an entry,
-        sets self.is_index accordingly and returns allowed methods"""
+        sets self.is_index accordingly and returns allowed methods
+        """
         if len(req.matches) > 0:
             self.is_index = False
             return ["GET", "HEAD", "PUT", "DELETE"]
@@ -87,18 +88,7 @@ class DocumentResource(Resource):
             data = json.loads(req.data)
         except ValueError:
             raise JSONHTTPException(400, {"message": "Invalid JSON"})
-        ex = self.document.validate_class_fields(data, validate_all=True)
-        if len(ex) == 0:
-            self.doc_instance = self.document(**data)
-        else:
-            raise JSONHTTPException(422, {
-                "message": "Validation Failed",
-                "errors": errors_to_dict(ex)
-            })
-        if self.is_index:
-            self.created_loc = self.create(req, rsp)
-        else:
-            self.update(req, rsp)
+        self.validate_and_process(data, req, rsp)
 
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
@@ -121,6 +111,25 @@ class DocumentResource(Resource):
         return self.created_loc
 
     # DocumentResource layer
+
+    def validate_and_process(self, data, req, rsp):
+        """
+        Validates data parsed by from_*. If it's invalid, raises 422.
+        If it's valid, creates or updates an instance in the database,
+        whatever is appropriate for current request.
+        """
+        ex = self.document.validate_class_fields(data, validate_all=True)
+        if len(ex) == 0:
+            self.doc_instance = self.document(**data)
+        else:
+            raise JSONHTTPException(422, {
+                "message": "Validation Failed",
+                "errors": errors_to_dict(ex)
+            })
+        if self.is_index:
+            self.created_loc = self.create(req, rsp)
+        else:
+            self.update(req, rsp)
 
     def link_header(self, req, rsp):
         "Builds the Link header from self.links"
