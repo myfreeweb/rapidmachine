@@ -91,3 +91,10 @@ class AppTest(t.Test):
         rsp = self.client.get('/posts?page=3', headers=ajson)
         data = json.loads(rsp.data)
         t.eq(rsp.headers['link'], '<http://localhost/posts?page=2>; rel="prev"')
+
+    def test_update(self):
+        rsp = self.client.put('/posts/Hello', content_type='application/json',
+                data='{"title":"Goodbye","body":"Goodbye World!"}')
+        t.eq(rsp.status_code, 204)
+        t.eq(mp.read_one({"title": "Goodbye"})['body'], "Goodbye World!")
+

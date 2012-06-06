@@ -95,6 +95,10 @@ class DocumentResource(Resource):
                 "message": "Validation Failed",
                 "errors": errors_to_dict(ex)
             })
+        if self.is_index:
+            self.created_loc = self.create(req, rsp)
+        else:
+            self.update(req, rsp)
 
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
@@ -114,7 +118,7 @@ class DocumentResource(Resource):
         return True
 
     def created_location(self, req, rsp):
-        return self.create(req, rsp)
+        return self.created_loc
 
     # DocumentResource layer
 
@@ -160,3 +164,6 @@ class DocumentResource(Resource):
         if not self.data:
             raise JSONHTTPException(404, {"message": "Document not found"})
 
+    def update(self, req, rsp):
+        inst = self.doc_instance.to_python()
+        self.persistence.update(req.matches, inst)
