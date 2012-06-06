@@ -18,6 +18,12 @@ class o14(t.Test):
         def to_html(self, req, rsp):
             return "foo"
 
+        def content_types_accepted(self, req, rsp):
+            return [("application/x-www-form-urlencoded", self.from_form)]
+
+        def from_form(self, req, rsp):
+            return None
+
     def test_ok(self):
         self.TestResource.conflict = False
         self.env.method = 'PUT'

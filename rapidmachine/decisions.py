@@ -288,7 +288,10 @@ def n16(res, req, rsp):
 
 def o14(res, req, rsp):
     "Is conflict?"
-    return res.is_conflict(req, rsp)
+    if res.is_conflict(req, rsp):
+        return True
+    handle_request_body(res, req, rsp)
+    return False
 
 
 def o16(res, req, rsp):
