@@ -35,7 +35,13 @@ def match(route, path):
 
 class App(object):
 
-    "WSGI application which routes requests to Resources."
+    """
+    A WSGI application which routes requests to Resources.
+
+    This class is meant to be subclassed. Usage:
+    Set the handlers attribute to a list of routes, initialize and pass to a
+    WSGI server.
+    """
 
     handlers = []
 

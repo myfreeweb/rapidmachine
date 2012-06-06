@@ -3,12 +3,12 @@
 
 class Resource(object):
     """
-    A Resource is an object that contains logic for one or more
+    An object that contains logic for one or more
     HTTP endpoints. The logic is contained in methods that accept
-    (self, req, rsp), where req and rsp are Request and Response
-    objects from werkzeug.wrappers; and answer certain questions
-    (eg. what methods are allowed?) or do tasks (delete the
-    resource).
+    (self, req, rsp), where req is an instance of
+    :class:`werkzeug.wrappers.Request` and rsp is an instance of
+    :class:`werkzeug.wrappers.Response` and answer certain questions
+    (eg. what methods are allowed?) or do tasks (delete the resource).
 
     This class is meant to be subclassed.
     """
@@ -33,10 +33,11 @@ class Resource(object):
         """
         Returns a list of accepted Content-Types. Each element of
         the list is a tuple that contains the type and a method
-        or a function that parses content in that type. For example:
-        [
-          ("application/json", self.from_json)
-        ]
+        or a function that parses content in that type. For example::
+
+            return [
+                ("application/json", self.from_json)
+            ]
         """
         return None
 
@@ -44,10 +45,11 @@ class Resource(object):
         """
         Returns a list of provided Content-Types. Each element of
         the list is a tuple that contains the type and a method
-        or a function that converts content to that type. For example:
-        [
-          ("application/json", self.to_json)
-        ]
+        or a function that converts content to that type. For example::
+        
+            return [
+                ("application/json", self.to_json)
+            ]
         """
         return [
             ("text/html", self.to_html)

@@ -25,15 +25,20 @@ def errors_to_dict(errors):
 
 class DocumentResource(Resource):
     """
-    A Resource with CRUD logic already implemented. You just have to set these
-    properties:
-    * document = a dictshield.document.Document
-    * persistence = a rapidmachine.persistence.Persistence
+    A Resource with CRUD logic already implemented.
+    
+    This class is meant to be subclassed. You just have to set these
+    attributes:
+
+    * document = a `dictshield`_.document.Document
+    * persistence = a :class:`rapidmachine.persistence.Persistence`
     * pk = a string -- the field of Document that's the primary key
       (used to construct URIs for redirection, eg. on POSTs)
     * store_types = a boolean (default is False) -- whether to store
       dictshield's metadata (_types, _cls) -- set to True if you have subclasses
       stored in one collection
+
+    .. _dictshield: https://github.com/j2labs/dictshield
     """
 
     # Properties
@@ -63,10 +68,6 @@ class DocumentResource(Resource):
         self.links = {}
 
     def allowed_methods(self, req, rsp):
-        """
-        Decides whether the requested resource is the index or an entry,
-        sets self.is_index accordingly and returns allowed methods
-        """
         if len(req.matches) > 0:
             self.is_index = False
             return ["GET", "HEAD", "PUT", "DELETE"]
@@ -89,7 +90,7 @@ class DocumentResource(Resource):
             data = json.loads(req.data)
         except ValueError:
             self.raise_error(400, {"message": "Invalid JSON"})
-        self.validate_and_process(data, req, rsp)
+        self.validate_and_process(req, rsp, data)
 
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
@@ -118,17 +119,18 @@ class DocumentResource(Resource):
     # DocumentResource layer
 
     def default_per_page(self, req, rsp):
+        "Returns the default number of entries per page. By default, 20."
         return 20
 
     def max_per_page(self, req, rsp):
+        "Returns the maximum number of entries per page. By default, 100."
         return 100
 
     def raise_error(self, code, data):
-        "Shorthand for raising FormattedHTTPException."
         self.data = data
         raise FormattedHTTPException(code)
 
-    def validate_and_process(self, data, req, rsp):
+    def validate_and_process(self, req, rsp, data):
         """
         Validates data parsed by from_*. If it's invalid, raises 422.
         If it's valid, creates or updates an instance in the database,
@@ -142,14 +144,14 @@ class DocumentResource(Resource):
                 "message": "Validation Failed",
                 "errors": errors_to_dict(ex)
             })
-        inst = self.doc_instance.to_python()
+        data = self.doc_instance.to_python()
         if not self.store_types:
-            del inst['_types']
-            del inst['_cls']
+            del data['_types']
+            del data['_cls']
         if self.is_index:
-            self.create(req, rsp, inst)
+            self.create(req, rsp, data)
         else:
-            self.update(req, rsp, inst)
+            self.update(req, rsp, data)
 
     def link_header(self, req, rsp):
         "Builds the Link header from self.links"
@@ -170,10 +172,17 @@ class DocumentResource(Resource):
         skip = per_page * (page - 1)
         return (skip, per_page, page)
 
-    def create(self, req, rsp, inst):
-        self.persistence.create(inst)
+    def create(self, req, rsp, data):
+        "Creates a new object in the database."
+        self.persistence.create(data)
 
     def read_index(self, req, rsp):
+        """
+        Retrieves a list of instances from the database for the requested page,
+        sets self.data and self.links appropriately.
+        Raises 404 if the requested page doesn't exist (i.e. there aren't enough
+        instances).
+        """
         (skip, limit, page) = self.paginate(req, rsp)
         self.data = self.persistence.read_many(req.matches,
             fields=self.document._public_fields,
@@ -189,13 +198,19 @@ class DocumentResource(Resource):
             self.links['next'] = u.set_query_param('page', str(page + 1))
 
     def read_entry(self, req, rsp):
+        """
+        Retrieves a matching instance from the database and sets self.data to it.
+        Raises 404 if there isn't a matching instance.
+        """
         self.data = self.persistence.read_one(req.matches,
                 fields=self.document._public_fields)
         if not self.data:
             self.raise_error(404, {"message": "Document not found"})
 
-    def update(self, req, rsp, inst):
-        self.persistence.update(req.matches, inst)
+    def update(self, req, rsp, data):
+        "Updates a matching object in the database."
+        self.persistence.update(req.matches, data)
 
     def delete(self, req, rsp):
+        "Deletes a matching object in the database."
         self.persistence.delete(req.matches)

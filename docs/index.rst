@@ -12,6 +12,7 @@ Documentation
 
    installation
    tutorial
+   reference
 
 Indices and tables
 ------------------
