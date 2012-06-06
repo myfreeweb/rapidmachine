@@ -2,6 +2,7 @@
 import datetime
 import types
 from werkzeug.exceptions import InternalServerError, UnsupportedMediaType
+from exceptions import FormattedHTTPException
 
 
 def b03(res, req, rsp):
@@ -424,13 +425,17 @@ def process(klass, req, rsp):
     if len(ctypes):
         rsp.content_type = ctypes[0]
 
-    state = b13
-    while not isinstance(state, int):
-        if state(res, req, rsp):
-            state = TRANSITIONS[state][0]
-        else:
-            state = TRANSITIONS[state][1]
-        if not isinstance(state, (int, types.FunctionType)):
-            raise InternalServerError("Invalid state: %r" % state)
-    rsp.status_code = state
+    try:
+        state = b13
+        while not isinstance(state, int):
+            if state(res, req, rsp):
+                state = TRANSITIONS[state][0]
+            else:
+                state = TRANSITIONS[state][1]
+            if not isinstance(state, (int, types.FunctionType)):
+                raise InternalServerError("Invalid state: %r" % state)
+        rsp.status_code = state
+    except FormattedHTTPException, e:
+        handle_response_body(res, req, rsp)
+        rsp.status_code = e.code
     return rsp

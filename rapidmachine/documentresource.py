@@ -3,7 +3,7 @@
 import json
 from math import ceil
 from resource import Resource
-from exceptions import JSONHTTPException
+from exceptions import FormattedHTTPException
 from collections import defaultdict
 
 
@@ -87,7 +87,7 @@ class DocumentResource(Resource):
         try:
             data = json.loads(req.data)
         except ValueError:
-            raise JSONHTTPException(400, {"message": "Invalid JSON"})
+            self.raise_error(400, {"message": "Invalid JSON"})
         self.validate_and_process(data, req, rsp)
 
     def to_json(self, req, rsp):
@@ -112,6 +112,10 @@ class DocumentResource(Resource):
 
     # DocumentResource layer
 
+    def raise_error(self, code, data):
+        self.data = data
+        raise FormattedHTTPException(code)
+
     def validate_and_process(self, data, req, rsp):
         """
         Validates data parsed by from_*. If it's invalid, raises 422.
@@ -122,7 +126,7 @@ class DocumentResource(Resource):
         if len(ex) == 0:
             self.doc_instance = self.document(**data)
         else:
-            raise JSONHTTPException(422, {
+            self.raise_error(422, {
                 "message": "Validation Failed",
                 "errors": errors_to_dict(ex)
             })
@@ -159,7 +163,7 @@ class DocumentResource(Resource):
             skip=skip, limit=limit)
         # First page should return [] and not 404 if there's nothing
         if len(self.data) == 0 and page != 1:
-            raise JSONHTTPException(404, {"message": "Page not found"})
+            self.raise_error(404, {"message": "Page not found"})
         u = req.url_object
         pages = ceil(self.persistence.count() / float(limit))
         if page > 1:
@@ -171,7 +175,7 @@ class DocumentResource(Resource):
         self.data = self.persistence.read_one(req.matches,
                 fields=self.document._public_fields)
         if not self.data:
-            raise JSONHTTPException(404, {"message": "Document not found"})
+            self.raise_error(404, {"message": "Document not found"})
 
     def update(self, req, rsp):
         inst = self.doc_instance.to_python()
