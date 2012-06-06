@@ -110,6 +110,10 @@ class DocumentResource(Resource):
     def created_location(self, req, rsp):
         return self.created_loc
 
+    def delete_resource(self, req, rsp):
+        self.delete(req, rsp)
+        return True
+
     # DocumentResource layer
 
     def raise_error(self, code, data):
@@ -180,3 +184,6 @@ class DocumentResource(Resource):
     def update(self, req, rsp):
         inst = self.doc_instance.to_python()
         self.persistence.update(req.matches, inst)
+
+    def delete(self, req, rsp):
+        self.persistence.delete(req.matches)

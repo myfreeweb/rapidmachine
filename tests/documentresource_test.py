@@ -98,3 +98,7 @@ class AppTest(t.Test):
         t.eq(rsp.status_code, 204)
         t.eq(mp.read_one({"title": "Goodbye"})['body'], "Goodbye World!")
 
+    def test_delete(self):
+        rsp = self.client.delete('/posts/Goodbye')
+        t.eq(rsp.status_code, 204)
+        t.eq(mp.read_many({"title": "Goodbye"}), [])
