@@ -28,16 +28,7 @@ class DocumentResource(Resource):
     * persistence = a rapidmachine.persistence.Persistence
     * pk = a string -- the field of Document that's the primary key
       (used to construct URIs for redirection, eg. on POSTs)
-
-    You also may override pagination settings:
-    * default_per_page (default is 20)
-    * max_per_page (default is 100)
     """
-
-    # Properties
-
-    default_per_page = 20
-    max_per_page     = 100
 
     # Class methods
 
@@ -116,6 +107,12 @@ class DocumentResource(Resource):
 
     # DocumentResource layer
 
+    def default_per_page(self, req, rsp):
+        return 20
+
+    def max_per_page(self, req, rsp):
+        return 100
+
     def raise_error(self, code, data):
         "Shorthand for raising FormattedHTTPException."
         self.data = data
@@ -152,9 +149,9 @@ class DocumentResource(Resource):
         """
         qs = req.url_object.query.dict
         per_page = int(qs['per_page']) if 'per_page' in qs \
-                else self.default_per_page
-        if per_page > self.max_per_page:
-            per_page = self.default_per_page
+                else self.default_per_page(req, rsp)
+        if per_page > self.max_per_page(req, rsp):
+            per_page = self.default_per_page(req, rsp)
         page = int(qs['page']) if 'page' in qs else 1
         skip = per_page * (page - 1)
         return (skip, per_page, page)
