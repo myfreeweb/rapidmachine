@@ -1,4 +1,4 @@
-# RapidMachine
+# RapidMachine [![Build Status](https://secure.travis-ci.org/myfreeweb/rapidmachine.png)](http://travis-ci.org/myfreeweb/rapidmachine)
 
 (Work in progress)
 
