@@ -62,9 +62,14 @@ class DocumentResource(Resource):
         self.links = {}
 
     def allowed_methods(self, req, rsp):
-        if len(req.matches) > 0:  # entry
+        """
+        Decides whether the requested resource is the index or an entry,
+        sets self.is_index accordingly and returns allowed methods"""
+        if len(req.matches) > 0:
+            self.is_index = False
             return ["GET", "HEAD", "PUT", "DELETE"]
-        else:  # index
+        else:
+            self.is_index = True
             return ["GET", "HEAD", "POST"]
 
     def content_types_accepted(self, req, rsp):
@@ -96,10 +101,11 @@ class DocumentResource(Resource):
         return json.dumps(self.data)
 
     def resource_exists(self, req, rsp):
-        if len(req.matches) == 0 and req.method == "GET":
-            self.read_index(req, rsp)
-        elif len(req.matches) > 0:  # read/update/delete entry
-            self.read_entry(req, rsp)
+        if req.method == "GET":
+            if self.is_index:
+                self.read_index(req, rsp)
+            else:
+                self.read_entry(req, rsp)
         # Not returning false, because we don't want html for 404s.
         # Raising exceptions instead.
         return True
