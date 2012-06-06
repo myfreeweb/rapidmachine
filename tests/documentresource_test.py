@@ -22,7 +22,9 @@ class PostResource(DocumentResource):
     document    = Post
     persistence = mp
     pk          = 'title'
-    default_per_page = 5
+
+    def default_per_page(self, req, rsp):
+        return 5
 
 
 class TestApp(App):

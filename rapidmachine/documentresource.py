@@ -23,12 +23,19 @@ def errors_to_dict(errors):
 class DocumentResource(Resource):
     """
     A Resource with CRUD logic already implemented. You just have to set these
-    attributes:
+    properties:
     * document = a dictshield.document.Document
     * persistence = a rapidmachine.persistence.Persistence
     * pk = a string -- the field of Document that's the primary key
       (used to construct URIs for redirection, eg. on POSTs)
+    * store_types = a boolean (default is False) -- whether to store
+      dictshield's metadata (_types, _cls) -- set to True if you have subclasses
+      stored in one collection
     """
+
+    # Properties
+
+    store_types = False
 
     # Class methods
 
@@ -132,10 +139,14 @@ class DocumentResource(Resource):
                 "message": "Validation Failed",
                 "errors": errors_to_dict(ex)
             })
+        inst = self.doc_instance.to_python()
+        if not self.store_types:
+            del inst['_types']
+            del inst['_cls']
         if self.is_index:
-            self.create(req, rsp)
+            self.create(req, rsp, inst)
         else:
-            self.update(req, rsp)
+            self.update(req, rsp, inst)
 
     def link_header(self, req, rsp):
         "Builds the Link header from self.links"
@@ -156,12 +167,10 @@ class DocumentResource(Resource):
         skip = per_page * (page - 1)
         return (skip, per_page, page)
 
-    def create(self, req, rsp):
-        inst = self.doc_instance.to_python()
+    def create(self, req, rsp, inst):
         self.persistence.create(inst)
 
     def read_index(self, req, rsp):
-        # TODO: what if we need private fields? cut on to_json, etc.
         (skip, limit, page) = self.paginate(req, rsp)
         self.data = self.persistence.read_many(req.matches,
             fields=self.document._public_fields,
@@ -182,8 +191,7 @@ class DocumentResource(Resource):
         if not self.data:
             self.raise_error(404, {"message": "Document not found"})
 
-    def update(self, req, rsp):
-        inst = self.doc_instance.to_python()
+    def update(self, req, rsp, inst):
         self.persistence.update(req.matches, inst)
 
     def delete(self, req, rsp):
