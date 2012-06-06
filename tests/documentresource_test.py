@@ -1,5 +1,8 @@
 import t
-import json
+try:
+    import json
+except ImportError: # Python 2.5
+    import simplejson as json
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
 from rapidmachine import App, R, V, DocumentResource

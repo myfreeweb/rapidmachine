@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import json
+try:
+    import json
+except ImportError: # Python 2.5
+    import simplejson as json
 from math import ceil
 from resource import Resource
 from exceptions import FormattedHTTPException
