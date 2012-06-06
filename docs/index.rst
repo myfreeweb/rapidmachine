@@ -1,22 +1,23 @@
-.. RapidMachine documentation master file, created by
-   sphinx-quickstart on Wed Jun  6 15:56:17 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+RapidMachine
+============
 
-Welcome to RapidMachine's documentation!
-========================================
+RapidMachine is a Rapid API Development toolkit for Python.
+It's based on a `Webmachine`_-style HTTP abstraction and build on `Werkzeug`_.
 
-Contents:
+Documentation
+-------------
 
 .. toctree::
    :maxdepth: 2
 
-
+   installation
+   tutorial
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
+.. _Webmachine: http://wiki.basho.com/Webmachine.html
+.. _Werkzeug: http://werkzeug.pocoo.org

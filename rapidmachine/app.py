@@ -8,7 +8,7 @@ from urlobject import URLObject
 
 class V(object):
 
-    def __init__(self, name, typey):
+    def __init__(self, name, typey=str):
         assert type(typey) == type
         self.name = name
         self.typey = typey
