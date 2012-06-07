@@ -46,7 +46,7 @@ class Resource(object):
         Returns a list of provided Content-Types. Each element of
         the list is a tuple that contains the type and a method
         or a function that converts content to that type. For example::
-        
+
             return [
                 ("application/json", self.to_json)
             ]

@@ -2,7 +2,7 @@
 
 try:
     import json
-except ImportError: # Python 2.5
+except ImportError:  # Python 2.5
     import simplejson as json
 from math import ceil
 from resource import Resource
@@ -26,7 +26,7 @@ def errors_to_dict(errors):
 class DocumentResource(Resource):
     """
     A Resource with CRUD logic already implemented.
-    
+
     This class is meant to be subclassed. You just have to set these
     attributes:
 
@@ -35,8 +35,8 @@ class DocumentResource(Resource):
     * pk = a string -- the field of Document that's the primary key
       (used to construct URIs for redirection, eg. on POSTs)
     * store_types = a boolean (default is False) -- whether to store
-      dictshield's metadata (_types, _cls) -- set to True if you have subclasses
-      stored in one collection
+      dictshield's metadata (_types, _cls) -- set to True if you have
+      subclasses stored in one collection
 
     .. _dictshield: https://github.com/j2labs/dictshield
     """
@@ -193,8 +193,8 @@ class DocumentResource(Resource):
         """
         Retrieves a list of instances from the database for the requested page,
         sets self.data and self.links appropriately.
-        Raises 404 if the requested page doesn't exist (i.e. there aren't enough
-        instances).
+        Raises 404 if the requested page doesn't exist (i.e. there aren't
+        enough instances).
         """
         (skip, limit, page) = self.paginate(req, rsp)
         self.data = self.persistence.read_many(req.matches,
@@ -212,7 +212,8 @@ class DocumentResource(Resource):
 
     def read_entry(self, req, rsp):
         """
-        Retrieves a matching instance from the database and sets self.data to it.
+        Retrieves a matching instance from the database and sets
+        self.data to it.
         Raises 404 if there isn't a matching instance.
         """
         self.data = self.persistence.read_one(req.matches,

@@ -42,7 +42,7 @@ class MemoryPersistence(Persistence):
         return self.read_one(query)
 
     def update(self, query, params):
-        self.db = [dict(d.items() + params.items()) if self.matches(d, query) \
+        self.db = [dict(d.items() + params.items()) if self.matches(d, query)
                 else d for d in self.db]
         return self.read_one(query)
 

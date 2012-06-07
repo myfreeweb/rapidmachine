@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class FormattedHTTPException(Exception):
 
     def __init__(self, code):

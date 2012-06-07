@@ -53,7 +53,7 @@ class App(object):
             if len(route) == len(path):  # stop early
                 try:
                     matches = match(route, path)
-                    if matches != False:
+                    if matches is not False:
                         rsp = Response()
                         req.matches = matches
                         return process(handler["res"], req, rsp)
