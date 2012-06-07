@@ -1,8 +1,7 @@
 Installation
 ============
 
-RapidMachine requires Python 2.6 or newer, but it's not compatible with Python 3.
-It'll support 2.5 as soon as we'll get rid of `a bug in urlobject <https://github.com/zacharyvoase/urlobject/issues/8>`_.
+RapidMachine requires Python 2.5 or newer, but it's not compatible with Python 3.
 
 Installing a released version
 -----------------------------
