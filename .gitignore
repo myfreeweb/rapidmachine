@@ -8,4 +8,3 @@ venv
 tests/*.err
 rapidmachine.egg-info
 docs/_build
-.tox
