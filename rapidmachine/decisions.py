@@ -351,13 +351,13 @@ def handle_response_body(res, req, rsp):
 
     # Generate the body
     func = first_match(res.content_types_provided, req, rsp, rsp.content_type)
-    if func is None:
+    if func is None:  # pragma: no cover
         raise InternalServerError()
 
     body = func(req, rsp)
     if isinstance(body, basestring):
         rsp.data = body
-    else:
+    else:  # pragma: no cover
         rsp.response = body
 
 
@@ -432,7 +432,7 @@ def process(klass, req, rsp):
                 state = TRANSITIONS[state][0]
             else:
                 state = TRANSITIONS[state][1]
-            if not isinstance(state, (int, types.FunctionType)):
+            if not isinstance(state, (int, types.FunctionType)):  # pragma: no cover
                 raise InternalServerError("Invalid state: %r" % state)
         rsp.status_code = state
     except FormattedHTTPException, e:

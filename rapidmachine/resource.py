@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class Resource(object):
+class Resource(object):  # pragma: no cover
     """
     An object that contains logic for one or more
     HTTP endpoints. The logic is contained in methods that accept

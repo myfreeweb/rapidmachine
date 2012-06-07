@@ -3,7 +3,7 @@
 from persistence import Persistence
 
 
-class MongoPersistence(Persistence):
+class MongoPersistence(Persistence):  # pragma: no cover
 
     "PyMongo persistence adapter"
 

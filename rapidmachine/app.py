@@ -59,7 +59,7 @@ class App(object):
                         return process(handler["res"], req, rsp)
                 except HTTPException, e:
                     return e
-        return NotFound()
+        return NotFound()  # pragma: no cover
 
     def __call__(self, env, start_rsp):
         req = Request(env)

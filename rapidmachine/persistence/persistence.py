@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class Persistence(object):
+class Persistence(object):  # pragma: no cover
 
     """
     Basic persistence interface.

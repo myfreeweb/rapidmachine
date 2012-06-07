@@ -2,7 +2,7 @@
 
 try:
     import json
-except ImportError:  # Python 2.5
+except ImportError:  # pragma: no cover
     import simplejson as json
 from math import ceil
 from resource import Resource
@@ -118,11 +118,11 @@ class DocumentResource(Resource):
 
     # DocumentResource layer
 
-    def default_per_page(self, req, rsp):
+    def default_per_page(self, req, rsp):  # pragma: no cover
         "Returns the default number of entries per page. By default, 20."
         return 20
 
-    def max_per_page(self, req, rsp):
+    def max_per_page(self, req, rsp):  # pragma: no cover
         "Returns the maximum number of entries per page. By default, 100."
         return 100
 
@@ -158,16 +158,15 @@ class DocumentResource(Resource):
             doc_instance = self.document(**data)
         except TypeError:  # pragma: no cover
             # On Python 2.5, you can't use a dict with unicode keys
-            data_converted = self._get_dict_with_string_keys(data)
+            data_converted = dict([(str(k), v) for k, v in data.items()])
             doc_instance = self.document(**data_converted)
-
         return doc_instance
 
-    def _get_dict_with_string_keys(self, d):
-        return dict([(str(k), v) for k, v in d.items()])
-
     def link_header(self, req, rsp):
-        "Builds the Link header from self.links"
+        """
+        Builds the Link header from self.links. Invoke this from to_*
+        methods for formats that don't contain links.
+        """
         rsp.headers['Link'] = ', '.join(['<%s>; rel="%s"' % (v, k)
             for (k, v) in self.links.iteritems()])
 
