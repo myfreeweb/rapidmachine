@@ -82,7 +82,9 @@ class DocumentResource(Resource):
 
     def content_types_provided(self, req, rsp):
         return [
-            ("application/json", self.to_json)
+            ("application/json", self.to_json),
+            ("application/vnd.hal+json", self.to_hal_json),
+            ("application/hal+json", self.to_hal_json)
         ]
 
     def from_json(self, req, rsp):
@@ -95,6 +97,18 @@ class DocumentResource(Resource):
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
         return json.dumps(self.data)
+
+    def to_hal_json(self, req, rsp):
+        links = dict([(k, {"href": v}) for (k, v) in self.links.iteritems()])
+        links["self"] = {"href": req.url_object.path}
+        data = self.data
+        if self.is_index:
+            for inst in data:
+                inst["_links"] = {"self": {"href": self.linkify(req, rsp, inst)}}
+            return json.dumps({"_links": links, "_embedded": {self.hal_type(req, rsp): data}})
+        else:
+            data["_links"] = links
+        return json.dumps(data)
 
     def resource_exists(self, req, rsp):
         if req.method == "GET":
@@ -110,13 +124,22 @@ class DocumentResource(Resource):
         return True
 
     def created_location(self, req, rsp):
-        return req.url_object.add_path_segment(self.doc_instance[self.pk])
+        return self.linkify(req, rsp, self.doc_instance)
 
     def delete_resource(self, req, rsp):
         self.delete(req, rsp)
         return True
 
     # DocumentResource layer
+
+    def linkify(self, req, rsp, inst):
+        return req.url_object.add_path_segment(inst[self.pk]).path
+
+    def hal_type(self, req, rsp):
+        """
+        Return the type for HAL format, by default the classname without
+        'Resource', all lowercased."""
+        return self.__class__.__name__.replace('Resource', '').lower()
 
     def default_per_page(self, req, rsp):  # pragma: no cover
         "Returns the default number of entries per page. By default, 20."
