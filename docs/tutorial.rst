@@ -8,7 +8,7 @@ Your first app
 
 Create a file called `app.py` with this code::
 
-    from rapidmachine import App, R, V, Resource, devserve
+    from rapidmachine import App, Route, Var, Resource, devserve
 
     class HelloResource(Resource):
         def to_html(self, req, rsp):
@@ -16,7 +16,7 @@ Create a file called `app.py` with this code::
 
     class HelloApp(App):
         handlers = [
-            R(["hello", V("username")], HelloResource)
+            Route("hello", Var("username")).to(HelloResource)
         ]
 
     if __name__ == "__main__":
@@ -49,16 +49,16 @@ Routing
 Routes are stored in the `handlers` attribute of your app.
 A route is a dictionary with `route` set to a list of URL parts and `res` to the resource.
 You shouldn't create dictionaries manually.
-Use the :func:`R` shorthand instead.
+Use the :class:`Route` shorthand instead.
 
-URL parts are strings and variables (instances of :class:`V`).
+URL parts are strings and variables (instances of :class:`Var`).
 Variables can have types.
 
 For example, this matches `/posts` and `/posts/123` but not `/posts/hello`::
 
     handlers = [
-        R(["posts"], PostResource)
-        R(["posts", V("id", int)], PostResource)
+        Route("posts").to(PostResource)
+        Route("posts", Var("id", int)).to(PostResource)
     ]
 
 And in your resource's methods, `req.matches["id"]` will be `123` (an int) if you request `/posts/123`.

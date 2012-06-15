@@ -6,7 +6,7 @@ from werkzeug.exceptions import HTTPException, NotFound, BadRequest
 from urlobject import URLObject
 
 
-class V(object):
+class Var(object):
 
     def __init__(self, name, typey=str):
         assert type(typey) == type
@@ -14,8 +14,13 @@ class V(object):
         self.typey = typey
 
 
-def R(route, res):
-    return {"route": route, "res": res}
+class Route(object):
+
+    def __init__(self, *args):
+        self.route = args
+
+    def to(self, res):
+        return {"route": self.route, "res": res}
 
 
 def match(route, path):
@@ -23,7 +28,7 @@ def match(route, path):
     matches = {}
     for routepart, pathpart in zip(route, path):
         if routepart != pathpart and routepart != "*":
-            if isinstance(routepart, V):
+            if isinstance(routepart, Var):
                 try:
                     matches[routepart.name] = routepart.typey(pathpart)
                 except ValueError:  # wrong type

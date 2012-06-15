@@ -11,9 +11,9 @@ def devserve(app, port=5000):  # pragma: no cover
 try:  # pragma: no cover
     from rapidmachine.resource import Resource
     from rapidmachine.documentresource import DocumentResource
-    from rapidmachine.app import App, V, R
+    from rapidmachine.app import App, Var, Route
     __all__ = ["devserve", "__version__", "App", "Resource",
-            "DocumentResource", "V", "R"]
+            "DocumentResource", "Var", "Route"]
 except ImportError:  # pragma: no cover
     import traceback
     traceback.print_exc()

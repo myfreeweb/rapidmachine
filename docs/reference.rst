@@ -8,6 +8,10 @@ rapidmachine
 
 .. autoclass:: App
 
+.. autoclass:: Route
+
+.. autoclass:: Var
+
 .. autoclass:: Resource
    :members:
 

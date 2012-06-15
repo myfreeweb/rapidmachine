@@ -1,7 +1,7 @@
 import t
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
-from rapidmachine import App, R, V, Resource
+from rapidmachine import App, Route, Var, Resource
 
 class TestRes(Resource):
     def to_html(self, req, rsp):
@@ -9,8 +9,8 @@ class TestRes(Resource):
 
 class TestApp(App):
     handlers = [
-        R(['test_int', V('world', int)], TestRes),
-        R(['test_str', V('world', str)], TestRes)
+        Route('test_int', Var('world', int)).to(TestRes),
+        Route('test_str', Var('world', str)).to(TestRes)
     ]
 
 class AppTest(t.Test):

@@ -5,7 +5,7 @@ except ImportError: # Python 2.5
     import simplejson as json
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
-from rapidmachine import App, R, V, DocumentResource
+from rapidmachine import App, Route, Var, DocumentResource
 from rapidmachine.persistence import MemoryPersistence
 from dictshield.document import Document
 from dictshield.fields import StringField
@@ -33,9 +33,9 @@ class PostResource(DocumentResource):
 
 class TestApp(App):
     handlers = [
-        R(['posts'], PostResource),
-        R(['posts', V('title', str)], PostResource),
-        R(['posts.schema'], PostResource.schema_resource()),
+        Route('posts').to(PostResource),
+        Route('posts', Var('title', str)).to(PostResource),
+        Route('posts.schema').to(PostResource.schema_resource()),
     ]
 
 
