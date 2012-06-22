@@ -7,7 +7,9 @@ except ImportError:  # pragma: no cover
 from math import ceil
 from resource import Resource
 from exceptions import FormattedHTTPException
+from persistence import EmbeddedPersistence
 from collections import defaultdict
+from dictshield.fields.compound import ListField
 
 
 def errors_to_dict(errors):
@@ -66,6 +68,10 @@ class DocumentResource(Resource):
 
     def __init__(self, req, rsp):
         self.links = {}
+        self.listfields = []
+        for k, v in self.document._fields.iteritems():
+            if isinstance(v, ListField):
+                self.listfields.append(k)
 
     def allowed_methods(self, req, rsp):
         if len(req.matches) > 0:
@@ -99,12 +105,15 @@ class DocumentResource(Resource):
         return json.dumps(self.data)
 
     def to_hal_json(self, req, rsp):
-        links = dict([(k, {"href": v}) for (k, v) in self.links.iteritems()])
+        def hrefify(iterator):
+            return dict([(k, {"href": v}) for k, v in iterator])
+        links = hrefify(self.links.iteritems())
         links["self"] = {"href": req.url_object.path}
         data = self.data
         if self.is_index:
             for inst in data:
-                inst["_links"] = {"self": {"href": self.linkify(req, rsp, inst)}}
+                inst["_links"] = hrefify(self.inst_links(req, rsp,
+                    inst).iteritems())
             return json.dumps({"_links": links, "_embedded": {self.hal_type(req, rsp): data}})
         else:
             data["_links"] = links
@@ -124,7 +133,7 @@ class DocumentResource(Resource):
         return True
 
     def created_location(self, req, rsp):
-        return self.linkify(req, rsp, self.doc_instance)
+        return self.inst_self_link(req, rsp, self.doc_instance).path
 
     def delete_resource(self, req, rsp):
         self.delete(req, rsp)
@@ -132,8 +141,18 @@ class DocumentResource(Resource):
 
     # DocumentResource layer
 
-    def linkify(self, req, rsp, inst):
-        return req.url_object.add_path_segment(inst[self.pk]).path
+    def inst_self_link(self, req, rsp, inst):
+        if self.is_index:
+            return req.url_object.add_path_segment(inst[self.pk])
+        else:
+            return req.url_object
+
+    def inst_links(self, req, rsp, inst):
+        sl = self.inst_self_link(req, rsp, inst)
+        links = {"self": sl.path}
+        for k in self.listfields:
+                links[k] = sl.add_path_segment(k).path
+        return links
 
     def hal_type(self, req, rsp):
         """
@@ -191,7 +210,7 @@ class DocumentResource(Resource):
         methods for formats that don't contain links.
         """
         rsp.headers['Link'] = ', '.join(['<%s>; rel="%s"' % (v, k)
-            for (k, v) in self.links.iteritems()])
+            for k, v in self.links.iteritems()])
 
     def paginate(self, req, rsp):
         """
@@ -242,11 +261,29 @@ class DocumentResource(Resource):
                 fields=self.document._public_fields)
         if not self.data:
             self.raise_error(404, {"message": "Document not found"})
+        self.links = self.inst_links(req, rsp, self.data)
 
     def update(self, req, rsp, data):
         "Updates a matching object in the database."
+        for k in self.listfields:
+            del data[k]
         self.persistence.update(req.matches, data)
 
     def delete(self, req, rsp):
         "Deletes a matching object in the database."
         self.persistence.delete(req.matches)
+
+class EmbeddedDocumentResource(DocumentResource):
+
+    def __init__(self, req, rsp):
+        DocumentResource.__init__(self, req, rsp)
+        parent_matches = {}
+        to_del = []
+        for k, v in req.matches.iteritems():
+            if k[:2] == '__':
+                parent_matches[k[2:]] = v
+                to_del.append(k)
+        for k in to_del:
+            del req.matches[k]
+        self.persistence = EmbeddedPersistence(self.parent_persistence,
+                parent_matches, self.field)

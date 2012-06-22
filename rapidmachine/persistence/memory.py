@@ -5,10 +5,10 @@ from persistence import Persistence
 
 class MemoryPersistence(Persistence):
 
-    "In-memory list persistence adapter, ONLY FOR DEVELOPMENT"
+    "In-memory list persistence adapter"
 
-    def __init__(self):
-        self.db = []
+    def __init__(self, db=[]):
+        self.db = db
 
     def matches(self, d, query):
         for key, qval in query.iteritems():
@@ -27,7 +27,7 @@ class MemoryPersistence(Persistence):
             limit = len(self.db)
         result = [d for d in self.db[skip:][:limit] if self.matches(d, query)]
         if fields:
-            result = [dict([(k, v) for (k, v) in d.iteritems() if k in fields])
+            result = [dict([(k, v) for k, v in d.iteritems() if k in fields])
                     for d in result]
         return result
 

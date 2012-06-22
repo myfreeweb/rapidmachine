@@ -5,10 +5,12 @@ except ImportError: # Python 2.5
     import simplejson as json
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
-from rapidmachine import App, Route, Var, DocumentResource
+from rapidmachine import App, Route, Var, \
+        DocumentResource, EmbeddedDocumentResource
 from rapidmachine.persistence import MemoryPersistence
-from dictshield.document import Document
+from dictshield.document import Document, EmbeddedDocument
 from dictshield.fields import StringField
+from dictshield.fields.compound import ListField, EmbeddedDocumentField
 
 
 ajson = {'Accept': 'application/json'}
@@ -16,10 +18,17 @@ hjson = {'Accept': 'application/hal+json'}
 mp = MemoryPersistence()
 
 
+class Comment(EmbeddedDocument):
+    _public_fields = ['body', 'uid']
+    body  = StringField(max_length=1024)
+    uid   = StringField(max_length=32)
+
+
 class Post(Document):
     _public_fields = ['title', 'body']
-    title = StringField(max_length=64)
-    body  = StringField(max_length=1024)
+    title    = StringField(max_length=64)
+    body     = StringField(max_length=1024)
+    comments = ListField(EmbeddedDocumentField(Comment))
 
 
 class PostResource(DocumentResource):
@@ -31,10 +40,20 @@ class PostResource(DocumentResource):
         return 5
 
 
+class CommentResource(EmbeddedDocumentResource):
+    document  = Comment
+    pk        = 'uid'
+    field     = 'comments'
+    parent_pk = 'title'
+    parent_persistence = mp
+
+
 class TestApp(App):
     handlers = [
         Route('posts').to(PostResource),
-        Route('posts', Var('title', str)).to(PostResource),
+        Route('posts', Var('title')).to(PostResource),
+        Route('posts', Var('__title'), 'comments').to(CommentResource),
+        Route('posts', Var('__title'), 'comments', Var('uid')).to(CommentResource),
         Route('posts.schema').to(PostResource.schema_resource()),
     ]
 
@@ -48,6 +67,10 @@ class AppTest(t.Test):
         rsp = self.client.post('/posts', content_type='application/json',
                 data='{"title":"Hello","body":"Hello World!"}')
         t.eq(rsp.headers['location'], 'http://localhost/posts/Hello')
+
+        rsp = self.client.post('/posts/Hello/comments', content_type='application/json',
+                data='{"uid":"abc","body":"Hello World!"}')
+        t.eq(rsp.headers['location'], 'http://localhost/posts/Hello/comments/abc')
 
     def test_create_invalid_format(self):
         rsp = self.client.post('/posts', content_type='application/json',
@@ -67,11 +90,15 @@ class AppTest(t.Test):
 
         rsp = self.client.get('/posts/Hello', headers=hjson)
         t.eq(json.loads(rsp.data), {
-            "_links": {"self": {"href": "/posts/Hello"}},
+            "_links": {"self": {"href": "/posts/Hello"},
+                       "comments": {"href": "/posts/Hello/comments"}},
             "title": "Hello",
             "body": "Hello World!"
         })
 
+        rsp = self.client.get('/posts/Hello/comments/abc', headers=ajson)
+        t.eq(rsp.status_code, 200)
+        t.eq(json.loads(rsp.data), {"uid": "abc", "body": "Hello World!"})
 
     def test_read_index(self):
         rsp = self.client.get('/posts', headers=ajson)
@@ -84,7 +111,8 @@ class AppTest(t.Test):
             "_embedded": {
                 "post": [
                     {
-                        "_links": {"self": {"href": "/posts/Hello"}},
+                        "_links": {"self": {"href": "/posts/Hello"},
+                                   "comments": {"href": "/posts/Hello/comments"}},
                         "title": "Hello",
                         "body": "Hello World!"
                     }
@@ -92,8 +120,15 @@ class AppTest(t.Test):
             }
         })
 
+        rsp = self.client.get('/posts/Hello/comments', headers=ajson)
+        t.eq(rsp.status_code, 200)
+        t.eq(json.loads(rsp.data), [{"uid": "abc", "body": "Hello World!"}])
+
     def test_read_invalid(self):
         rsp = self.client.get('/posts/Goodbye', headers=ajson)
+        t.eq(rsp.status_code, 404)
+
+        rsp = self.client.get('/posts/Hello/comments/cba', headers=ajson)
         t.eq(rsp.status_code, 404)
 
     def test_read_schema(self):
@@ -136,8 +171,20 @@ class AppTest(t.Test):
                 data='{"title":"Goodbye","body":"Goodbye World!"}')
         t.eq(rsp.status_code, 204)
         t.eq(mp.read_one({"title": "Goodbye"})['body'], "Goodbye World!")
+        t.eq(len(mp.read_one({"title": "Goodbye"})["comments"]), 1)
+
+        rsp = self.client.put('/posts/Goodbye/comments/abc', content_type='application/json',
+                data='{"uid":"abc","body":"Goodbye World!"}')
+        t.eq(rsp.status_code, 204)
+        t.eq(mp.read_one({"title": "Goodbye"})["comments"][0]["body"], "Goodbye World!")
 
     def test_delete(self):
+        mp.create({"title": "Goodbye", "comments": [{"uid": "abc", "body":
+            "Hello World!"}], "body": "Hello World!"})
+        rsp = self.client.delete('/posts/Goodbye/comments/abc')
+        t.eq(rsp.status_code, 204)
+        t.eq(mp.read_one({"title": "Goodbye"})["comments"], [])
+
         rsp = self.client.delete('/posts/Goodbye')
         t.eq(rsp.status_code, 204)
         t.eq(mp.read_many({"title": "Goodbye"}), [])
