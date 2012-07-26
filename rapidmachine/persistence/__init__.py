@@ -3,6 +3,7 @@
 from persistence import Persistence
 from mongo import MongoPersistence
 from memory import MemoryPersistence
+from hstore import HstorePersistence
 
 
 class EmbeddedPersistence(Persistence):
@@ -57,4 +58,4 @@ class EmbeddedPersistence(Persistence):
         return len(self.l)
 
 __all__ = ['Persistence', 'MongoPersistence', 'MemoryPersistence',
-           'EmbeddedPersistence']
+           'HstorePersistence', 'EmbeddedPersistence']
