@@ -2,7 +2,7 @@ RapidMachine
 ============
 
 RapidMachine is a Rapid API Development toolkit for Python.
-It's based on a `Webmachine`_-style HTTP abstraction and build on `Werkzeug`_.
+It's based on a `Webmachine`_-style HTTP abstraction and built on `Werkzeug`_.
 The simplest app looks like this::
 
     from rapidmachine import App, Route, Var, Resource
