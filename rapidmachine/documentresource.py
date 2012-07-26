@@ -300,12 +300,9 @@ class EmbeddedDocumentResource(DocumentResource):
     def __init__(self, req, rsp):
         DocumentResource.__init__(self, req, rsp)
         parent_matches = {}
-        to_del = []
-        for k, v in req.matches.iteritems():
+        for k, v in list(req.matches.iteritems()):
             if k[:2] == '__':
                 parent_matches[k[2:]] = v
-                to_del.append(k)
-        for k in to_del:
-            del req.matches[k]
+                del req.matches[k]
         self.persistence = EmbeddedPersistence(self.parent_persistence,
                 parent_matches, self.field)
