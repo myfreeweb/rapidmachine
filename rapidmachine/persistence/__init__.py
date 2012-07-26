@@ -9,6 +9,7 @@ from hstore import HstorePersistence
 class EmbeddedPersistence(Persistence):
     """
     Persistence wrapper that uses a list of embedded entries.
+    Used by :class:`rapidmachine.EmbeddedDocumentResource`.
     """
 
     def __init__(self, parent, parent_query, field):

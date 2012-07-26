@@ -7,10 +7,13 @@ rapidmachine
 .. module:: rapidmachine
 
 .. autoclass:: App
+   :members:
 
 .. autoclass:: Route
+   :members:
 
 .. autoclass:: Var
+   :members:
 
 .. autoclass:: Resource
    :members:

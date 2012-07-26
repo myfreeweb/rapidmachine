@@ -35,10 +35,10 @@ In this example, you created a resource and an app.
 
 An app (instance of :class:`App`) is a WSGI application that routes requests to Resources.
 When it's called by a WSGI server, it creates a request object and a response object (by default, :class:`werkzeug.wrappers.Request` and :class:`werkzeug.wrappers.Response`, but you can override request_class and response_class to use subclasses of these).
-Then it finds a matching handler and passes all three to the decision core
+Then it finds a matching handler and passes all three to the decision core.
 It also adds two attributes to the Request object:
 
-* url_object -- `URLObject`_ for the requested URL
+* url_object -- a `URLObject`_ for the requested URL
 * matches -- a dictionary of matched variables
 
 A resource (instance of :class:`Resource`) is an object with methods which answer questions (e.g. does this resource exist?) and do things (e.g. delete it).
