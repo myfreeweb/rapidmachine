@@ -8,7 +8,7 @@ Your first app
 
 Create a file called `app.py` with this code::
 
-    from rapidmachine import App, Route, Var, Resource, devserve
+    from rapidmachine import App, Route, Var, Resource
 
     class HelloResource(Resource):
         def to_html(self, req, rsp):

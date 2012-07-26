@@ -1,5 +1,4 @@
 import t
-from werkzeug.test import Client
 from werkzeug.wrappers import Response
 from rapidmachine import App, Route, Var, Resource
 
@@ -16,7 +15,7 @@ class TestApp(App):
 class AppTest(t.Test):
 
     def setUp(self):
-        self.client = Client(TestApp(), Response)
+        self.client = TestApp().test_client()
 
     def test_vars(self):
         t.eq(self.client.get('/test_int/123').status_code, 200)

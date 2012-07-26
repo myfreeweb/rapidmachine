@@ -3,6 +3,7 @@
 from decisions import process
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import HTTPException, NotFound, BadRequest
+from werkzeug.test import Client as TestClient
 from urlobject import URLObject
 
 
@@ -49,6 +50,10 @@ class App(object):
     """
 
     handlers = []
+    request_class = Request
+    response_class = Response
+    not_found_class = NotFound
+    test_client_class = TestClient
 
     def dispatch_response(self, req):
         req.url_object = URLObject(req.url)
@@ -59,18 +64,24 @@ class App(object):
                 try:
                     matches = match(route, path)
                     if matches is not False:
-                        rsp = Response()
+                        rsp = self.response_class()
                         req.matches = matches
                         return process(handler["res"], req, rsp)
                 except HTTPException, e:
                     return e
-        return NotFound()  # pragma: no cover
+        return self.not_found_class()  # pragma: no cover
 
     def __call__(self, env, start_rsp):
-        req = Request(env)
+        req = self.request_class(env)
         rsp = self.dispatch_response(req)
         return rsp(env, start_rsp)
 
     def devserve(self, port=5000):  # pragma: no cover
+        "Starts a development server with this app on a specified port"
         from werkzeug.serving import run_simple
         run_simple('0.0.0.0', port, self, use_debugger=True, use_reloader=True)
+
+    def test_client(self, use_cookies=True):
+        "Returns a test client for this app"
+        return self.test_client_class(self, self.response_class,
+                use_cookies=use_cookies)
