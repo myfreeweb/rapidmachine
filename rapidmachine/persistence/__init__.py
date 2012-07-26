@@ -6,6 +6,9 @@ from memory import MemoryPersistence
 
 
 class EmbeddedPersistence(Persistence):
+    """
+    Persistence wrapper that uses a list of embedded entries.
+    """
 
     def __init__(self, parent, parent_query, field):
         self.parent = parent

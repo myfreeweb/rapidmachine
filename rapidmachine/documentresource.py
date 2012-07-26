@@ -274,6 +274,25 @@ class DocumentResource(Resource):
         self.persistence.delete(req.matches)
 
 class EmbeddedDocumentResource(DocumentResource):
+    """
+    A DocumentResource for embedded lists of resources.
+
+    This class is meant to be subclassed. You just have to set these
+    attributes:
+
+    * document = a `dictshield`_.document.Document
+    * parent_persistence = a :class:`rapidmachine.persistence.Persistence`
+    * parent_pk = a string -- the field of the parent document that's the primary key
+    * pk = a string -- the field of the embedded document that's the primary key
+    * field = a string -- which field of the parent document is a ListField
+      that's a list of embedded documents
+    * store_types = a boolean (default is False) -- whether to store
+      dictshield's metadata (_types, _cls) -- set to True if you have
+      subclasses stored in one collection
+
+    .. _dictshield: https://github.com/j2labs/dictshield
+    """
+
 
     def __init__(self, req, rsp):
         DocumentResource.__init__(self, req, rsp)
