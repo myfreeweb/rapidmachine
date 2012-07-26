@@ -20,7 +20,7 @@ Create a file called `app.py` with this code::
         ]
 
     if __name__ == "__main__":
-        devserve(HelloApp())
+        HelloApp().devserve()
 
 Run it and try making a request::
 

@@ -70,3 +70,7 @@ class App(object):
         req = Request(env)
         rsp = self.dispatch_response(req)
         return rsp(env, start_rsp)
+
+    def devserve(self, port=5000):  # pragma: no cover
+        from werkzeug.serving import run_simple
+        run_simple('0.0.0.0', port, self, use_debugger=True, use_reloader=True)
