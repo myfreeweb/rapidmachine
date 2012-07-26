@@ -5,6 +5,7 @@ try:
 except ImportError:  # pragma: no cover
     import simplejson as json
 from math import ceil
+from bson import json_util
 from resource import Resource
 from exceptions import FormattedHTTPException
 from persistence import EmbeddedPersistence
@@ -102,7 +103,7 @@ class DocumentResource(Resource):
 
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
-        return json.dumps(self.data)
+        return json.dumps(self.data, default=json_util.default)
 
     def to_hal_json(self, req, rsp):
         def hrefify(iterator):
@@ -114,10 +115,13 @@ class DocumentResource(Resource):
             for inst in data:
                 inst["_links"] = hrefify(self.inst_links(req, rsp,
                     inst).iteritems())
-            return json.dumps({"_links": links, "_embedded": {self.hal_type(req, rsp): data}})
+            return json.dumps({
+                "_links": links,
+                "_embedded": {self.hal_type(req, rsp): data}
+            }, default=json_util.default)
         else:
             data["_links"] = links
-        return json.dumps(data)
+        return json.dumps(data, default=json_util.default)
 
     def resource_exists(self, req, rsp):
         if req.method == "GET":

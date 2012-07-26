@@ -2,7 +2,6 @@
 
 from persistence import Persistence
 
-
 class MongoPersistence(Persistence):  # pragma: no cover
 
     "PyMongo persistence adapter"
@@ -18,7 +17,12 @@ class MongoPersistence(Persistence):  # pragma: no cover
         return self.db.find_one(query, **kwargs)
 
     def read_many(self, query, **kwargs):
-        return self.db.find(query, **kwargs)
+        c = [d for d in self.db.find(query, **kwargs)]
+        if not '_id' in kwargs:
+            for d in c:
+                del d['_id']
+                # dammit, mongo
+        return c
 
     def replace(self, query, params):
         self.db.update(query, params)
@@ -35,3 +39,5 @@ class MongoPersistence(Persistence):  # pragma: no cover
 
     def count(self):
         return self.db.count()
+
+__all__ = ['MongoPersistence']

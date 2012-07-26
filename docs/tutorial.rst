@@ -34,7 +34,7 @@ How that works
 In this example, you created a resource and an app.
 
 An app (instance of :class:`App`) is a WSGI application that routes requests to Resources.
-When it's called by a WSGI server, it creates a request object (:class:`werkzeug.wrappers.Request`) and a response object (:class:`werkzeug.wrappers.Response`).
+When it's called by a WSGI server, it creates a request object and a response object (by default, :class:`werkzeug.wrappers.Request` and :class:`werkzeug.wrappers.Response`, but you can override request_class and response_class to use subclasses of these).
 Then it finds a matching handler and passes all three to the decision core
 It also adds two attributes to the Request object:
 
