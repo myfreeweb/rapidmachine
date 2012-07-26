@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from persistence import Persistence
-import psycopg2.extras
 
 class HstorePersistence(Persistence):  # pragma: no cover
 
@@ -14,6 +13,7 @@ class HstorePersistence(Persistence):  # pragma: no cover
     """
 
     def __init__(self, conn, table, column='data'):
+        import psycopg2.extras
         self.conn = conn
         psycopg2.extras.register_hstore(self.conn)
         self.cur = conn.cursor()
