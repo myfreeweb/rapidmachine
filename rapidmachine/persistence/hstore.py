@@ -5,7 +5,13 @@ import psycopg2.extras
 
 class HstorePersistence(Persistence):  # pragma: no cover
 
-    "PostgreSQL hstore persistence adapter"
+    """
+    PostgreSQL hstore persistence adapter.
+    To use, execute `CREATE EXTENSION hstore;` on the database from the psql
+    shell and create a table with id and an hstore, like that:
+    `CREATE TABLE test (id serial PRIMARY KEY, data hstore);`
+    Pass the hstore column name as the column argument if it isn't "data".
+    """
 
     def __init__(self, conn, table, column='data'):
         self.conn = conn

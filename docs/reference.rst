@@ -37,3 +37,6 @@ rapidmachine.persistence
 
 .. autoclass:: MongoPersistence
    :members:
+
+.. autoclass:: HstorePersistence
+   :members:
