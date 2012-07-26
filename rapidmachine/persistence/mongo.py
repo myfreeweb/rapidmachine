@@ -14,14 +14,22 @@ class MongoPersistence(Persistence):  # pragma: no cover
         return self.read_one(objid)
 
     def read_one(self, query, **kwargs):
-        return self.db.find_one(query, **kwargs)
+        d = self.db.find_one(query, **kwargs)
+        if d:
+            if '_id' in kwargs['fields']:
+                d['_id'] = str(d['_id'])
+            else:
+                del d['_id']
+        return d
 
     def read_many(self, query, **kwargs):
         c = [d for d in self.db.find(query, **kwargs)]
-        if not '_id' in kwargs:
+        if '_id' in kwargs['fields']:
+            for d in c:
+                d['_id'] = str(d['_id'])
+        else:
             for d in c:
                 del d['_id']
-                # dammit, mongo
         return c
 
     def replace(self, query, params):

@@ -42,8 +42,8 @@ For example, zero-boilerplate CRUD::
 
     class PostsApp(App):
         handlers = [
-            Route("posts").to(HelloResource),
-            Route("posts", Var("title")).to(HelloResource)
+            Route("posts").to(PostResource),
+            Route("posts", Var("title")).to(PostResource)
         ]
 
     if __name__ == "__main__":
