@@ -72,6 +72,13 @@ class App(object):
         return self.not_found_class()  # pragma: no cover
 
     def __call__(self, env, start_rsp):
+        qs = URLObject("?" + env["QUERY_STRING"]).query.dict
+        if "_method" in qs:
+            env["REQUEST_METHOD"] = qs["_method"].upper()
+            del qs["_method"]
+        if "_ctype" in qs:
+            env["CONTENT_TYPE"] = qs["_ctype"]
+            del qs["_ctype"]
         req = self.request_class(env)
         rsp = self.dispatch_response(req)
         return rsp(env, start_rsp)
@@ -79,7 +86,7 @@ class App(object):
     def devserve(self, port=5000):  # pragma: no cover
         "Starts a development server with this app on a specified port"
         from werkzeug.serving import run_simple
-        run_simple('0.0.0.0', port, self, use_debugger=True, use_reloader=True)
+        run_simple("0.0.0.0", port, self, use_debugger=True, use_reloader=True)
 
     def test_client(self, use_cookies=True):
         "Returns a test client for this app"
