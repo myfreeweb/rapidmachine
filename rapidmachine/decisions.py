@@ -7,7 +7,7 @@ from exceptions import FormattedHTTPException
 
 def b03(res, req, rsp):
     "Options?"
-    if req.method == 'OPTIONS':
+    if req.method == "OPTIONS":
         for (header, value) in res.options(req, rsp):
             rsp.headers[header] = value
         return True
@@ -123,7 +123,7 @@ def g08(res, req, rsp):
 
 def g09(res, req, rsp):
     "If-Match: * exists?"
-    return '*' in req.if_match
+    return "*" in req.if_match
 
 
 def g11(res, req, rsp):
@@ -133,7 +133,7 @@ def g11(res, req, rsp):
 
 def h07(res, req, rsp):
     "If-Match: * exists?"
-    return 'if-match' in req.headers and '*' in req.if_match
+    return "if-match" in req.headers and "*" in req.if_match
 
 
 def h10(res, req, rsp):
@@ -174,7 +174,7 @@ def i12(res, req, rsp):
 
 def i13(res, req, rsp):
     "If-None-Match: * exists?"
-    return '*' in req.if_none_match
+    return "*" in req.if_none_match
 
 
 def j18(res, req, rsp):

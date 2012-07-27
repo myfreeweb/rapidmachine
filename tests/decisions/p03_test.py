@@ -9,10 +9,10 @@ class p03(t.Test):
             return True
 
         conflict = False
-        accepted = [('text/html', to_html)]
+        accepted = [("text/html", to_html)]
         
         def allowed_methods(self, req, rsp):
-            return ['PUT']
+            return ["PUT"]
         
         def content_types_accepted(self, req, rsp):
             return self.accepted
@@ -27,19 +27,19 @@ class p03(t.Test):
             return False
 
         def to_html(self, req, rsp):
-            return 'foo'
+            return "foo"
 
     def test_ok(self):
         self.TestResource.conflict = False
-        self.env.method = 'PUT'
-        self.env.content_type = 'text/html'
+        self.env.method = "PUT"
+        self.env.content_type = "text/html"
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ['bar'])
+        t.eq(self.rsp.response, ["bar"])
     
     def test_conflict(self):
         self.TestResource.conflict = True
-        self.env.method = 'PUT'
+        self.env.method = "PUT"
         self.go()
         t.eq(self.rsp.status_code, 409)
     
@@ -47,7 +47,7 @@ class p03(t.Test):
         prev = self.TestResource.accepted
         self.TestResource.accepted = []
         self.TestResource.conflict = False
-        self.env.method = 'PUT'
+        self.env.method = "PUT"
         self.go()
         self.TestResource.accepted = prev
         t.eq(self.rsp.status_code, 415)

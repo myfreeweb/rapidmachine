@@ -3,8 +3,8 @@ import sys
 from distutils.core import setup
 from rapidmachine import __version__
 
-if sys.version < '2.5':
-    sys.exit('Python 2.5 or higher is required')
+if sys.version < "2.5":
+    sys.exit("Python 2.5 or higher is required")
 
 setup(name="rapidmachine",
       version=__version__,

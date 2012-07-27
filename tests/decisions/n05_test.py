@@ -27,14 +27,14 @@ class n05(t.Test):
 
     def test_allow_post(self):
         self.TestResource.allow = True
-        self.env.method = 'POST'
+        self.env.method = "POST"
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ['processed'])
+        t.eq(self.rsp.response, ["processed"])
     
     def test_dont_allow(self):
         self.TestResource.allow = False
-        self.env.method = 'POST'
+        self.env.method = "POST"
         self.go()
         t.eq(self.rsp.status_code, 410)
         t.eq(self.rsp.response, [])

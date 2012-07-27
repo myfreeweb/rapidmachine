@@ -16,20 +16,20 @@ class MongoPersistence(Persistence):  # pragma: no cover
     def read_one(self, query, **kwargs):
         d = self.db.find_one(query, **kwargs)
         if d:
-            if '_id' in kwargs['fields']:
-                d['_id'] = str(d['_id'])
+            if "_id" in kwargs["fields"]:
+                d["_id"] = str(d["_id"])
             else:
-                del d['_id']
+                del d["_id"]
         return d
 
     def read_many(self, query, **kwargs):
         c = [d for d in self.db.find(query, **kwargs)]
-        if '_id' in kwargs['fields']:
+        if "_id" in kwargs["fields"]:
             for d in c:
-                d['_id'] = str(d['_id'])
+                d["_id"] = str(d["_id"])
         else:
             for d in c:
-                del d['_id']
+                del d["_id"]
         return c
 
     def replace(self, query, params):
@@ -48,4 +48,4 @@ class MongoPersistence(Persistence):  # pragma: no cover
     def count(self):
         return self.db.count()
 
-__all__ = ['MongoPersistence']
+__all__ = ["MongoPersistence"]

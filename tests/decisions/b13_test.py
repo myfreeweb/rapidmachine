@@ -23,7 +23,7 @@ class b13(t.Test):
         self.TestResource.pong = True
         self.go()
         t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ['nom nom'])
+        t.eq(self.rsp.response, ["nom nom"])
 
     def test_no_service(self):
         self.TestResource.available = False

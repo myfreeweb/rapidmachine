@@ -12,7 +12,7 @@ class HstorePersistence(Persistence):  # pragma: no cover
     Pass the hstore column name as the column argument if it isn't "data".
     """
 
-    def __init__(self, conn, table, column='data'):
+    def __init__(self, conn, table, column="data"):
         import psycopg2.extras
         self.conn = conn
         psycopg2.extras.register_hstore(self.conn)
@@ -42,7 +42,7 @@ class HstorePersistence(Persistence):  # pragma: no cover
         c = []
         for d in self.cur:
             data = d[1]
-            data['id'] = d[0]
+            data["id"] = d[0]
             if fields:
                 for field in list(data.iterkeys()):
                     if field not in fields:
@@ -72,4 +72,4 @@ class HstorePersistence(Persistence):  # pragma: no cover
         self.cur.execute("SELECT count(*) FROM %s" % self.table)
         return int(self.cur.next()[0])
 
-__all__ = ['HstorePersistence']
+__all__ = ["HstorePersistence"]

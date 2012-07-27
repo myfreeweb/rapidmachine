@@ -25,8 +25,8 @@ class k05(t.Test):
         t.eq(self.rsp.response, [])
     
     def test_moved(self):
-        self.TestResource.moved = '/foo'
+        self.TestResource.moved = "/foo"
         self.go()
         t.eq(self.rsp.status_code, 301)
-        t.eq(self.rsp.location, '/foo')
+        t.eq(self.rsp.location, "/foo")
         t.eq(self.rsp.response, [])

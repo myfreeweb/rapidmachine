@@ -20,7 +20,7 @@ def errors_to_dict(errors):
     # WTF, dictshield
     result = defaultdict(list)
     for error in errors:
-        msg, field = str(error).split(':')[0].split(' - ')
+        msg, field = str(error).split(":")[0].split(" - ")
         result[field].append(msg)
     return result
 
@@ -161,7 +161,7 @@ class DocumentResource(Resource):
         """
         Return the type for HAL format, by default the classname without
         'Resource', all lowercased."""
-        return self.__class__.__name__.replace('Resource', '').lower()
+        return self.__class__.__name__.replace("Resource", "").lower()
 
     def default_per_page(self, req, rsp):  # pragma: no cover
         "Returns the default number of entries per page. By default, 20."
@@ -191,8 +191,8 @@ class DocumentResource(Resource):
             })
         data = self.doc_instance.to_python()
         if not self.store_types:
-            del data['_types']
-            del data['_cls']
+            del data["_types"]
+            del data["_cls"]
         if self.is_index:
             self.create(req, rsp, data)
         else:
@@ -212,7 +212,7 @@ class DocumentResource(Resource):
         Builds the Link header from self.links. Invoke this from to_*
         methods for formats that don't contain links.
         """
-        rsp.headers['Link'] = ', '.join(['<%s>; rel="%s"' % (v, k)
+        rsp.headers["Link"] = ", ".join(['<%s>; rel="%s"' % (v, k)
             for k, v in self.links.iteritems()])
 
     def paginate(self, req, rsp):
@@ -221,11 +221,11 @@ class DocumentResource(Resource):
         how many entries to skip, how many to show per page, the current page.
         """
         qs = req.url_object.query.dict
-        per_page = int(qs['per_page']) if 'per_page' in qs \
+        per_page = int(qs["per_page"]) if "per_page" in qs \
                 else self.default_per_page(req, rsp)
         if per_page > self.max_per_page(req, rsp):
             per_page = self.default_per_page(req, rsp)
-        page = int(qs['page']) if 'page' in qs else 1
+        page = int(qs["page"]) if "page" in qs else 1
         skip = per_page * (page - 1)
         return (skip, per_page, page)
 
@@ -250,9 +250,9 @@ class DocumentResource(Resource):
         u = req.url_object
         pages = ceil(self.persistence.count() / float(limit))
         if page > 1:
-            self.links['prev'] = u.set_query_param('page', str(page - 1))
+            self.links["prev"] = u.set_query_param("page", str(page - 1))
         if page < pages:
-            self.links['next'] = u.set_query_param('page', str(page + 1))
+            self.links["next"] = u.set_query_param("page", str(page + 1))
 
     def read_entry(self, req, rsp):
         """
@@ -301,7 +301,7 @@ class EmbeddedDocumentResource(DocumentResource):
         DocumentResource.__init__(self, req, rsp)
         parent_matches = {}
         for k, v in list(req.matches.iteritems()):
-            if k[:2] == '__':
+            if k[:2] == "__":
                 parent_matches[k[2:]] = v
                 del req.matches[k]
         self.persistence = EmbeddedPersistence(self.parent_persistence,
