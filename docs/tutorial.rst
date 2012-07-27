@@ -76,6 +76,10 @@ Even though you should use DocumentResource to make CRUD (Create-Read-Update-Del
         pk = 'title'
 
         def allowed_methods(self, req, rsp):
+            # here we decide whether the index or a record is requested,
+            # store it and return, well, allowed methods
+            # on /records, req.matches = {}
+            # on /records/something, req.matches = {"title": "something"}
             if len(req.matches) > 0:
                 self.is_index = False
                 return ["GET", "HEAD", "PUT", "DELETE"]
@@ -91,6 +95,8 @@ Even though you should use DocumentResource to make CRUD (Create-Read-Update-Del
 
         def from_json(self, req, rsp):
             self.data = json.loads(req.data)
+            # note: create/update depends on whether it's the index or a record,
+            # not POST or PUT. so you can allow POST on records to update if you want
             if self.is_index:
                 self.persistence.create(self.data)
             else:
