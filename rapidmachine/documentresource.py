@@ -298,7 +298,9 @@ class DocumentResource(Resource):
 
         # using the model here because some dbs (eg. hstore) are string only
         # TODO: make optional? it's not needed with mongo even if you use datetimes
-        self.data = self._process_data(self._get_doc_instance(self.data).to_python())
+        self.data = self._process_data(
+                self._get_doc_instance(self.data).to_python(),
+                delete_listfields=True)
         self.links = self.inst_links(req, rsp, self.data)
 
     def update(self, req, rsp, data):
