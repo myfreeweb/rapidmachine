@@ -73,13 +73,13 @@ Even though you should use DocumentResource to make CRUD (Create-Read-Update-Del
 
     class CRUDResource(Resource):
         persistence = MemoryPersistence()
-        pk = 'title'
+        pk = "title"
 
         def allowed_methods(self, req, rsp):
-            # here we decide whether the index or a record is requested,
-            # store it and return, well, allowed methods
-            # on /records, req.matches = {}
-            # on /records/something, req.matches = {"title": "something"}
+            # here we decide whether the index or a record is requested, store it and return, well, allowed methods
+            # on /records, req.matches == {}
+            # on /records/something, req.matches == {"title": "something"}
+            # the key "title" comes from the name of the Var in routes
             if len(req.matches) > 0:
                 self.is_index = False
                 return ["GET", "HEAD", "PUT", "DELETE"]
@@ -128,8 +128,8 @@ Even though you should use DocumentResource to make CRUD (Create-Read-Update-Del
 
     class CRUDApp(App):
         handlers = [
-            Route('records').to(CRUDResource),
-            Route('records', Var('title')).to(CRUDResource)
+            Route("records").to(CRUDResource),
+            Route("records", Var("title")).to(CRUDResource)
         ]
 
     if __name__ == "__main__":

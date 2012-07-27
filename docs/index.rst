@@ -31,14 +31,14 @@ For example, zero-boilerplate CRUD::
     db = pymongo.Connection().database
 
     class Post(Document):
-        _public_fields = ['title', 'body']
+        _public_fields = ["title", "body"]
         title = StringField(max_length=64)
         body  = StringField(max_length=1024)
 
     class PostResource(DocumentResource):
         document    = Post
-        persistence = MongoPersistence(db, 'posts')
-        pk          = 'title'
+        persistence = MongoPersistence(db, "posts")
+        pk          = "title"
 
     class PostsApp(App):
         handlers = [
