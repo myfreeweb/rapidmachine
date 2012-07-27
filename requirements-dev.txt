@@ -11,6 +11,7 @@ docutils==0.9
 nose==1.1.2
 nose-cov==1.5
 pep8==1.2
+psycopg2==2.4.5
 pyflakes==0.5.0
 pymongo==2.2
 pystache==0.5.2
