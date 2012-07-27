@@ -173,6 +173,10 @@ class AppTest(t.Test):
         t.eq(mp.read_one({"title": "Goodbye"})['body'], "Goodbye World!")
         t.eq(len(mp.read_one({"title": "Goodbye"})["comments"]), 1)
 
+        rsp = self.client.put('/posts/Nothing', content_type='application/json',
+                data='{"some": "thing"}')
+        t.eq(rsp.status_code, 404)
+
         rsp = self.client.put('/posts/Goodbye/comments/abc', content_type='application/json',
                 data='{"uid":"abc","body":"Goodbye World!"}')
         t.eq(rsp.status_code, 204)
@@ -188,3 +192,6 @@ class AppTest(t.Test):
         rsp = self.client.delete('/posts/Goodbye')
         t.eq(rsp.status_code, 204)
         t.eq(mp.read_many({"title": "Goodbye"}), [])
+
+        rsp = self.client.delete('/posts/Nothing')
+        t.eq(rsp.status_code, 404)

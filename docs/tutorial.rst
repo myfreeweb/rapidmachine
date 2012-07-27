@@ -106,13 +106,14 @@ Even though you should use DocumentResource to make CRUD (Create-Read-Update-Del
             return json.dumps(self.data)
 
         def resource_exists(self, req, rsp):
-            if req.method == "GET":
-                if self.is_index:
+            # this both performs reading and makes sure the resource exists
+            if self.is_index:
+                if req.method != "POST":
                     self.data = self.persistence.read_many(req.matches)
-                else:
-                    self.data = self.persistence.read_one(req.matches)
-                    if not self.data:
-                        return False
+            else:
+                self.data = self.persistence.read_one(req.matches)
+                if not self.data:
+                    return False
             return True
 
         def post_is_create(self, req, rsp):

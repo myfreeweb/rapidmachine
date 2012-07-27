@@ -123,11 +123,11 @@ class DocumentResource(Resource):
         return json.dumps(data)
 
     def resource_exists(self, req, rsp):
-        if req.method == "GET":
-            if self.is_index:
+        if self.is_index:
+            if req.method != "POST":
                 self.read_index(req, rsp)
-            else:
-                self.read_entry(req, rsp)
+        else:
+            self.read_entry(req, rsp)
         # Not returning false, because we don't want html for 404s.
         # Raising exceptions instead.
         return True
