@@ -101,21 +101,23 @@ class DocumentResource(Resource):
             self.raise_error(400, {"message": "Invalid JSON"})
         self.validate_and_process(req, rsp, data)
 
-    def to_json(self, req, rsp):
-        self.link_header(req, rsp)
+    def get_data(self, req, rsp):
         if self.is_error:
-            return json.dumps(self.data)
+            return self.data
         else:
             if self.is_index:
-                return json.dumps([
-                    self._process_data(
+                return [self._process_data(
                         self._get_doc_instance(d).to_json(encode=False),
-                        delete_listfields=True
-                    ) for d in self.data])
+                        delete_listfields=True) for d in self.data]
             else:
-                return json.dumps(self._process_data(
+                return self._process_data(
                         self._get_doc_instance(self.data).to_json(encode=False),
-                        delete_listfields=True))
+                        delete_listfields=True)
+
+
+    def to_json(self, req, rsp):
+        self.link_header(req, rsp)
+        return json.dumps(self.get_data(req, rsp))
 
     def to_hal_json(self, req, rsp):
         def hrefify(iterator):
