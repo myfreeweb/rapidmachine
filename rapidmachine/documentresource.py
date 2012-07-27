@@ -275,6 +275,11 @@ class DocumentResource(Resource):
         self.data = self.persistence.read_many(req.matches,
             fields=self.document._public_fields,
             skip=skip, limit=limit)
+        # see read_entry
+        for d in self.data:
+            d = self._process_data(
+                    self._get_doc_instance(d).to_python(),
+                    delete_listfields=True)
         # First page should return [] and not 404 if there's nothing
         if len(self.data) == 0 and page != 1:
             self.raise_error(404, {"message": "Page not found"})
