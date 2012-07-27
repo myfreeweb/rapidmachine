@@ -16,6 +16,8 @@ class MongoPersistence(Persistence):  # pragma: no cover
     def read_one(self, query, **kwargs):
         d = self.db.find_one(query, **kwargs)
         if d:
+            if not "fields" in kwargs:
+                kwargs["fields"] = {}
             if "_id" in kwargs["fields"]:
                 d["_id"] = str(d["_id"])
             else:
@@ -24,6 +26,8 @@ class MongoPersistence(Persistence):  # pragma: no cover
 
     def read_many(self, query, **kwargs):
         c = [d for d in self.db.find(query, **kwargs)]
+        if not "fields" in kwargs:
+            kwargs["fields"] = {}
         if "_id" in kwargs["fields"]:
             for d in c:
                 d["_id"] = str(d["_id"])
