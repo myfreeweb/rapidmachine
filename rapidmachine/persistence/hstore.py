@@ -21,8 +21,10 @@ class HstorePersistence(Persistence):  # pragma: no cover
         self.column = column
 
     def create(self, params):
-        self.cur.execute("INSERT INTO "+self.table+" ("+self.column+") VALUES (%s)",
+        sql = self.cur.mogrify("INSERT INTO "+self.table+" ("+self.column+") VALUES (%s)",
                 (params,))
+        sql = sql.replace("::timestamp", "")
+        self.cur.execute(sql)
         self.conn.commit()
         return self.read_one(params)
 
@@ -38,7 +40,10 @@ class HstorePersistence(Persistence):  # pragma: no cover
             sql += " LIMIT "+str(int(limit))
         if skip:
             sql += " OFFSET "+str(int(skip))
-        self.cur.execute(sql, (query,))
+
+        sql = self.cur.mogrify(sql, (query,))
+        sql = sql.replace("::timestamp", "")
+        self.cur.execute(sql)
         c = []
         for d in self.cur:
             data = d[1]
