@@ -195,6 +195,12 @@ class DocumentResource(Resource):
         If it's valid, creates or updates an instance in the database,
         whatever is appropriate for current request.
         """
+        # screw you, dictshield
+        # y u no parse dates and stuff on .validate_class_fields?!
+        try:
+            data = self._process_data(self._get_doc_instance(data).to_python())
+        except:
+            pass
         ex = self.document.validate_class_fields(data, validate_all=True)
         if len(ex) == 0:
             self.doc_instance = self._get_doc_instance(data)

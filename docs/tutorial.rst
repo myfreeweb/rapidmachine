@@ -140,5 +140,58 @@ But this shows how it works.
 The `pk` property is only used in `created_location` to build URLs.
 The name of the Var in the second route (which is the same!) builds the query.
 
+Using and customizing DocumentResource
+--------------------------------------
+
+Now, the most interesting part!
+The reason why RapidMachine was created!
+Not typing things like `self.persistence.create(self.data)` every time you make a resource.
+
+Let's make a DocumentResource subclass that will add the date and time of creation automatically and won't let the user override it::
+
+    from datetime import datetime
+    from rapidmachine import App, Route, Var, DocumentResource
+    from rapidmachine.persistence import MemoryPersistence
+    from dictshield.document import Document
+    from dictshield.fields import StringField, DateTimeField
+
+    class Post(Document):
+        _public_fields = ["title", "body", "created_at"]
+        title = StringField(max_length=64)
+        body = StringField(max_length=1024)
+        created_at = DateTimeField()
+
+    class PostResource(DocumentResource):
+        document    = Post
+        persistence = MemoryPersistence()
+        pk          = "title"
+
+        def create(self, req, rsp, data):
+            data["created_at"] = datetime.now()
+            super(PostResource, self).create(req, rsp, data)
+
+        def update(self, req, rsp, data):
+            del data["created_at"]
+            super(PostResource, self).update(req, rsp, data)
+
+    class PostsApp(App):
+        handlers = [
+            Route("posts").to(PostResource),
+            Route("posts", Var("title")).to(PostResource)
+        ]
+
+    if __name__ == "__main__":
+        PostsApp().devserve()
+
+Now we can create a post and try to update created_at::
+
+    $ curl -XPOST -d '{"title": "Hello", "body": "world"}' -H 'Content-Type: application/json' localhost:5000/posts
+    $ curl localhost:5000/posts
+    [{"body": "world", "created_at": "2012-07-27T22:00:00.580299", "title": "Hello"}]
+    $ curl -XPUT -d '{"title": "Hello", "body": "world", "2011-01-21T11:11:11"}' -H 'Content-Type: application/json' localhost:5000/posts/Hello
+    $ curl localhost:5000/posts
+    [{"body": "world", "created_at": "2012-07-27T22:00:00.580299", "title": "Hello"}]
+
+Now delete the `update` override and try doing the same -- you can store the new date.
 
 .. _URLObject: https://github.com/zacharyvoase/urlobject
