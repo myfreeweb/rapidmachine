@@ -67,6 +67,7 @@ class DocumentResource(Resource):
     # Resource layer
 
     def __init__(self, req, rsp):
+        self.is_error = False
         self.links = {}
         self.listfields = []
         for k, v in self.document._fields.iteritems():
@@ -102,7 +103,19 @@ class DocumentResource(Resource):
 
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
-        return json.dumps(self.data)
+        if self.is_error:
+            return json.dumps(self.data)
+        else:
+            if self.is_index:
+                return json.dumps([
+                    self._process_data(
+                        self._get_doc_instance(d).to_json(encode=False),
+                        delete_listfields=True
+                    ) for d in self.data])
+            else:
+                return json.dumps(self._process_data(
+                        self._get_doc_instance(self.data).to_json(encode=False),
+                        delete_listfields=True))
 
     def to_hal_json(self, req, rsp):
         def hrefify(iterator):
@@ -173,6 +186,7 @@ class DocumentResource(Resource):
 
     def raise_error(self, code, data):
         self.data = data
+        self.is_error = True
         raise FormattedHTTPException(code)
 
     def validate_and_process(self, req, rsp, data):
@@ -189,14 +203,23 @@ class DocumentResource(Resource):
                 "message": "Validation Failed",
                 "errors": errors_to_dict(ex)
             })
-        data = self.doc_instance.to_python()
-        if not self.store_types:
-            del data["_types"]
-            del data["_cls"]
+        data = self._process_data(self.doc_instance.to_python())
         if self.is_index:
             self.create(req, rsp, data)
         else:
             self.update(req, rsp, data)
+
+    def _process_data(self, data, delete_listfields=False):
+        if not self.store_types:
+            if "_types" in data:
+                del data["_types"]
+            if "_cls" in data:
+                del data["_cls"]
+        if delete_listfields:
+            for k in self.listfields:
+                if k in data:
+                    del data[k]
+        return data
 
     def _get_doc_instance(self, data):
         try:
@@ -268,8 +291,7 @@ class DocumentResource(Resource):
 
     def update(self, req, rsp, data):
         "Updates a matching object in the database."
-        for k in self.listfields:
-            del data[k]
+        data = self._process_data(data, delete_listfields=True)
         self.persistence.update(req.matches, data)
 
     def delete(self, req, rsp):
