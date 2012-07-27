@@ -76,9 +76,9 @@ class App(object):
         if "_method" in qs:
             env["REQUEST_METHOD"] = qs["_method"].upper()
             del qs["_method"]
-        if "_ctype" in qs:
-            env["CONTENT_TYPE"] = qs["_ctype"]
-            del qs["_ctype"]
+        if "_accept" in qs:
+            env["HTTP_ACCEPT"] = qs["_accept"]
+            del qs["_accept"]
         req = self.request_class(env)
         rsp = self.dispatch_response(req)
         return rsp(env, start_rsp)
