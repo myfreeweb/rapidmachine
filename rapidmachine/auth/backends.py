@@ -23,7 +23,7 @@ class AuthBackend(object):
         if it exists and the password is verified; otherwise,
         returns False.
         """
-        raise NotImplemented
+        raise NotImplemented()
 
 
 class PersistenceAuthBackend(AuthBackend):

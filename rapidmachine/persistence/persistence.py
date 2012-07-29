@@ -15,28 +15,28 @@ class Persistence(object):  # pragma: no cover
 
     def create(self, params):
         "Creates an object in the database."
-        raise NotImplemented
+        raise NotImplemented()
 
     def read_one(self, query, fields=None):
         "Reads one object from the database."
-        raise NotImplemented
+        raise NotImplemented()
 
     def read_many(self, query, fields=None, skip=0, limit=0):
         "Reads many objects from the database."
-        raise NotImplemented
+        raise NotImplemented()
 
     def replace(self, query, params):
         "Replaces an object in the database."
-        raise NotImplemented
+        raise NotImplemented()
 
     def update(self, query, params):
         "Updates an object in the database."
-        raise NotImplemented
+        raise NotImplemented()
 
     def delete(self, query):
         "Deletes an object in the database."
-        raise NotImplemented
+        raise NotImplemented()
 
     def count(self):
         "Returns how much there are objects in the database."
-        raise NotImplemented
+        raise NotImplemented()

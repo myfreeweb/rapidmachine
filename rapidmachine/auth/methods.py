@@ -19,14 +19,14 @@ class AuthMethod(object):
         Returns whether the request can be authorized using this method (a
         boolean).
         """
-        raise NotImplemented
+        raise NotImplemented()
 
     def get_user(self, backend):
         """
         Extracts the username and password from the request and calls get_user
         on backend with them.
         """
-        raise NotImplemented
+        raise NotImplemented()
 
 
 class BasicAuthMethod(AuthMethod):
