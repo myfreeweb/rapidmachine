@@ -4,10 +4,12 @@ from werkzeug.test import EnvironBuilder
 from rapidmachine.exceptions import InvalidAuthException
 from rapidmachine.auth.methods import BasicAuthMethod
 
+
 class FakeAuthBackend(object):
 
     def get_user(self, username, password):
         return {"username": username, "password": password}
+
 
 class MethodsTest(t.Test):
 
