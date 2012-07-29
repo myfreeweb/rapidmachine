@@ -46,3 +46,5 @@ class BasicAuthMethod(AuthMethod):
         except TypeError:
             raise InvalidAuthException
         return backend.get_user(data[0], data[1])
+
+all_methods = [BasicAuthMethod]

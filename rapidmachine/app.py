@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-
+from auth.methods import all_methods
 from decisions import process
+from exceptions import InvalidAuthException
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import HTTPException, NotFound, BadRequest
 from werkzeug.test import Client as TestClient
@@ -54,6 +55,8 @@ class App(object):
     response_class = Response
     not_found_class = NotFound
     test_client_class = TestClient
+    auth_methods = all_methods
+    auth_backend = False
 
     def dispatch_response(self, req):
         req.url_object = URLObject(req.url)
@@ -66,10 +69,21 @@ class App(object):
                     if matches is not False:
                         rsp = self.response_class()
                         req.matches = matches
+                        self.authenticate(req)
                         return process(handler["res"], req, rsp)
                 except HTTPException, e:
                     return e
         return self.not_found_class()  # pragma: no cover
+
+    def authenticate(self, req):
+        if self.auth_backend:
+            for method in self.auth_methods:
+                m = method(req)
+                if m.check():
+                    try:
+                        req.user = m.get_user(self.auth_backend)
+                    except InvalidAuthException:
+                        raise BadRequest
 
     def __call__(self, env, start_rsp):
         qs = URLObject("?" + env["QUERY_STRING"]).query.dict

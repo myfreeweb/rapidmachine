@@ -52,3 +52,7 @@ def raises(exctype, func, *args, **kwargs):
         raise AssertionError("Function %s did not raise %s" % (
             func_name, exctype.__name__))
 
+class FakeAuthBackend(object):
+
+    def get_user(self, username, password):
+        return {"username": username, "password": password}
