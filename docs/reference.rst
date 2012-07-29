@@ -43,3 +43,20 @@ rapidmachine.persistence
 
 .. autoclass:: HstorePersistence
    :members:
+
+rapidmachine.auth
+--------------------------
+
+.. module:: rapidmachine.auth
+
+.. autoclass:: AuthBackend
+   :members:
+
+.. autoclass:: PersistenceAuthBackend
+   :members:
+
+.. autoclass:: AuthMethod
+   :members:
+
+.. autoclass:: BasicAuthMethod
+   :members:
