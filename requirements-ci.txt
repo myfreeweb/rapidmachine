@@ -3,3 +3,5 @@ Werkzeug==0.8.3
 nose==1.1.2
 dictshield==0.4.4
 simplejson==2.5.2
+passlib==1.6
+py-bcrypt==0.2
