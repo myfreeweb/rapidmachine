@@ -76,6 +76,7 @@ class App(object):
         return self.not_found_class()  # pragma: no cover
 
     def authenticate(self, req):
+        req.user = False
         if self.auth_backend:
             for method in self.auth_methods:
                 m = method(req)

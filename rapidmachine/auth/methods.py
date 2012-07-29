@@ -35,7 +35,7 @@ class BasicAuthMethod(AuthMethod):
     """
 
     def check(self):
-        h = self.req.headers["Authorization"]
+        h = self.req.headers.get("Authorization")
         if h:
             return h[:5] == "Basic"
         return False

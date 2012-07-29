@@ -9,7 +9,7 @@ class AuthInfoResource(Resource):
         if req.user:
             return "Hello, " + req.user["username"]
         else:
-            return "Invalid username/password"
+            return "No auth"
 
 
 class AuthTestApp(App):
@@ -34,3 +34,6 @@ class AppAuthTest(t.Test):
         t.eq(self.client.get('/info',
             headers={"Authorization": "Basic notbase64"}).status_code,
             400)
+
+    def test_no_auth(self):
+        t.eq(self.client.get('/info').data, "No auth")
