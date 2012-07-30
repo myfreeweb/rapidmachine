@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import datetime
 import types
 from werkzeug.exceptions import InternalServerError, UnsupportedMediaType
-from exceptions import FormattedHTTPException
+from .exceptions import FormattedHTTPException
 
 
 def b03(res, req, rsp):

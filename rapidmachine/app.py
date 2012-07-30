@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from auth.methods import all_methods
-from decisions import process
-from exceptions import InvalidAuthException
+from __future__ import absolute_import
+from .auth.methods import all_methods
+from .decisions import process
+from .exceptions import InvalidAuthException
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import HTTPException, NotFound, BadRequest
 from werkzeug.test import Client as TestClient

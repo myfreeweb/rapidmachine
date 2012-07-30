@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from persistence import Persistence
+from __future__ import absolute_import
+from .persistence import Persistence
 
 class HstorePersistence(Persistence):  # pragma: no cover
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
-from persistence import Persistence
-from memory import MemoryPersistence
+from __future__ import absolute_import
+from .persistence import Persistence
+from .memory import MemoryPersistence
 
 class EmbeddedPersistence(Persistence):
     """

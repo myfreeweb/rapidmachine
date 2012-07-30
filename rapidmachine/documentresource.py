@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
+from __future__ import absolute_import
 try:
     import json
 except ImportError:  # pragma: no cover
     import simplejson as json
 from math import ceil
-from resource import Resource
-from exceptions import FormattedHTTPException
-from persistence import EmbeddedPersistence
+from .resource import Resource
+from .exceptions import FormattedHTTPException
+from .persistence import EmbeddedPersistence
 from collections import defaultdict
 from dictshield.fields.compound import ListField
 
