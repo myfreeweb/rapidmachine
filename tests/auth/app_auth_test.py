@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 from base64 import b64encode
 from rapidmachine import App, Resource, Route
 
@@ -26,14 +27,12 @@ class AppAuthTest(t.Test):
         self.client = AuthTestApp().test_client()
 
     def test_auth_valid(self):
-        t.eq(self.client.get('/info',
-            headers={"Authorization": "Basic "+b64encode("usr:pwd")}).data,
-            "Hello, usr")
+        self.client.get('/info', headers={"Authorization": "Basic "+\
+                b64encode("usr:pwd")}).data |should_be.equal_to| "Hello, usr"
 
     def test_auth_invalid(self):
-        t.eq(self.client.get('/info',
-            headers={"Authorization": "Basic notbase64"}).status_code,
-            400)
+        self.client.get('/info', headers={"Authorization": "Basic notb64"})\
+                .status_code |should_be.equal_to| 400
 
     def test_no_auth(self):
-        t.eq(self.client.get('/info').data, "No auth")
+        self.client.get('/info').data |should_be.equal_to| "No auth"

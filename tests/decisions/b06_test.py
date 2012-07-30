@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b06(t.Test):
     
@@ -15,10 +16,10 @@ class b06(t.Test):
     def test_ok(self):
         self.env.headers["content-type"] = "text/plain"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["nom nom"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["nom nom"]
 
     def test_not_ok(self):
         self.env.headers["content-foo"] = "bizbang"
         self.go()
-        t.eq(self.rsp.status_code, 501)
+        self.rsp.status_code |should_be.equal_to| 501

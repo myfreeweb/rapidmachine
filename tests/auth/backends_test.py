@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 from passlib.hash import bcrypt
 from rapidmachine.persistence import MemoryPersistence
 from rapidmachine.auth.backends import PersistenceAuthBackend
@@ -17,12 +18,12 @@ class BackendsTest(t.Test):
 
     def test_persistencebackend_valid(self):
         pb = PersistenceAuthBackend(self.mp)
-        t.eq(pb.get_user("user", "pass")["username"], "user")
+        pb.get_user("user", "pass")["username"] |should_be.equal_to| "user"
 
     def test_persistencebackend_invalid_user(self):
         pb = PersistenceAuthBackend(self.mp)
-        t.eq(pb.get_user("notuser", "wrong"), False)
+        pb.get_user("notuser", "wrong") |should_be.equal_to| False
 
     def test_persistencebackend_invalid_password(self):
         pb = PersistenceAuthBackend(self.mp)
-        t.eq(pb.get_user("user", "wrong"), False)
+        pb.get_user("user", "wrong") |should_be.equal_to| False

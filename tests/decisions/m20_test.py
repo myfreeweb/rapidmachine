@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class g11(t.Test):
     
@@ -25,12 +26,12 @@ class g11(t.Test):
         self.TestResource.done = True
         self.env.method = "DELETE"
         self.go()
-        t.eq(self.rsp.status_code, 204)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 204
+        self.rsp.response |should_be.equal_to| []
     
     def test_not_done(self):
         self.TestResource.done = False
         self.env.method = "DELETE"
         self.go()
-        t.eq(self.rsp.status_code, 202)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 202
+        self.rsp.response |should_be.equal_to| []

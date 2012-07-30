@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class g11(t.Test):
     
@@ -15,19 +16,19 @@ class g11(t.Test):
 
     def test_no_if_match(self):
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.etag, "bar")
-        t.eq(self.rsp.response, ["foo"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.etag |should_be.equal_to| "bar"
+        self.rsp.response |should_be.equal_to| ["foo"]
     
     def test_if_match_ok(self):
         self.env.headers["if-match"] = "bar"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.etag, "bar")
-        t.eq(self.rsp.response, ["foo"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.etag |should_be.equal_to| "bar"
+        self.rsp.response |should_be.equal_to| ["foo"]
     
     def test_if_match_fail(self):
         self.env.headers["if-match"] = "baz"
         self.go()
-        t.eq(self.rsp.status_code, 412)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 412
+        self.rsp.response |should_be.equal_to| []

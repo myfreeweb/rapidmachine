@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class i04(t.Test):
     
@@ -29,12 +30,12 @@ class i04(t.Test):
         self.env.method = "PUT"
         self.env.content_type = "text/html"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["bar"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["bar"]
     
     def test_moved(self):
         self.TestResource.moved = "/foo"
         self.env.method = "PUT"
         self.go()
-        t.eq(self.rsp.status_code, 301)
-        t.eq(self.rsp.location, "/foo")
+        self.rsp.status_code |should_be.equal_to| 301
+        self.rsp.location |should_be.equal_to| "/foo"

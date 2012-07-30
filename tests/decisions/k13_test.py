@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class k13(t.Test):
     
@@ -16,13 +17,13 @@ class k13(t.Test):
     def test_etag_match(self):
         self.env.headers["if-none-match"] = "foo"
         self.go()
-        t.eq(self.rsp.status_code, 304)
-        t.eq(self.rsp.etag, "foo")
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 304
+        self.rsp.etag |should_be.equal_to| "foo"
+        self.rsp.response |should_be.equal_to| []
     
     def test_modified(self):
         self.env.headers["if-none-match"] = "bar"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.etag, "foo")
-        t.eq(self.rsp.response, ["bar"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.etag |should_be.equal_to| "foo"
+        self.rsp.response |should_be.equal_to| ["bar"]

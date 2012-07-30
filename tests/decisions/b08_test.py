@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b08(t.Test):
     
@@ -15,11 +16,11 @@ class b08(t.Test):
     def test_ok(self):
         self.env.headers["authorization"] = "yay"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["nom nom"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["nom nom"]
 
     def test_not_ok(self):
         self.go()
-        t.eq(self.rsp.status_code, 401)
-        t.eq(self.rsp.headers["www-authenticate"], "oauth")
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 401
+        self.rsp.headers["www-authenticate"] |should_be.equal_to| "oauth"
+        self.rsp.response |should_be.equal_to| []

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b13(t.Test):
 
@@ -22,12 +23,12 @@ class b13(t.Test):
         self.TestResource.available = True
         self.TestResource.pong = True
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["nom nom"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["nom nom"]
 
     def test_no_service(self):
         self.TestResource.available = False
         self.TestResource.pong = True
         self.go()
-        t.eq(self.rsp.status_code, 503)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 503
+        self.rsp.response |should_be.equal_to| []

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b07(t.Test):
     
@@ -13,11 +14,11 @@ class b07(t.Test):
     def test_ok(self):
         self.env.headers["cookie"] = "id=foo"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["nom nom"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["nom nom"]
 
     def test_not_ok(self):
         self.env.headers["cookie"] = "bar"
         self.go()
-        t.eq(self.rsp.status_code, 403)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 403
+        self.rsp.response |should_be.equal_to| []

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class o14(t.Test):
     
@@ -21,18 +22,18 @@ class o14(t.Test):
     def test_ok(self):
         self.TestResource.multiple = False
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["foo"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["foo"]
     
     def test_multiple(self):
         self.TestResource.multiple = True
         self.go()
-        t.eq(self.rsp.status_code, 300)
-        t.eq(self.rsp.response, ["foo"])
+        self.rsp.status_code |should_be.equal_to| 300
+        self.rsp.response |should_be.equal_to| ["foo"]
 
     def test_multiple_no_body(self):
         self.TestResource.multiple = True
         self.env.method = "TRACE"
         self.go()
-        t.eq(self.rsp.status_code, 300)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 300
+        self.rsp.response |should_be.equal_to| []

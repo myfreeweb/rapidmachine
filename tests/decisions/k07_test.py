@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class k07(t.Test):
     
@@ -18,11 +19,11 @@ class k07(t.Test):
     def test_not_existed(self):
         self.TestResource.existed = False
         self.go()
-        t.eq(self.rsp.status_code, 404)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 404
+        self.rsp.response |should_be.equal_to| []
     
     def test_existed(self):
         self.TestResource.existed = True
         self.go()
-        t.eq(self.rsp.status_code, 410)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 410
+        self.rsp.response |should_be.equal_to| []

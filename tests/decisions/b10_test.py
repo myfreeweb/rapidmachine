@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b10(t.Test):
     
@@ -12,11 +13,11 @@ class b10(t.Test):
     
     def test_ok(self):
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["nom nom"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["nom nom"]
 
     def test_not_ok(self):
         self.env.method = "POST"
         self.go()
-        t.eq(self.rsp.status_code, 405)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 405
+        self.rsp.response |should_be.equal_to| []

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class n11(t.Test):
     
@@ -43,8 +44,8 @@ class n11(t.Test):
         self.env.method = "POST"
         self.env.content_type = "application/octet-stream"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, "created")
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| "created"
 
     def test_post_is_create_redirect(self):
         self.TestResource.create = True
@@ -52,18 +53,18 @@ class n11(t.Test):
         self.env.method = "POST"
         self.env.content_type = "application/octet-stream"
         self.go()
-        t.eq(self.rsp.status_code, 303)
-        t.eq(self.rsp.headers.get("location"), "/foo")
-        t.eq(self.rsp.response, "created")
+        self.rsp.status_code |should_be.equal_to| 303
+        self.rsp.headers.get("location") |should_be.equal_to| "/foo"
+        self.rsp.response |should_be.equal_to| "created"
 
     def test_post_is_process(self):
         self.TestResource.create = False
         self.env.method = "POST"
         self.env.content_type = "application/octet-stream"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.headers.get("location"), None)
-        t.eq(self.rsp.response, "processed")
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.headers.get("location") |should_be.equal_to| None
+        self.rsp.response |should_be.equal_to| "processed"
     
     def test_post_is_process_error(self):
         self.TestResource.create = False
@@ -72,5 +73,5 @@ class n11(t.Test):
         self.env.content_type = "application/octet-stream"
         self.go()
         self.TestResource.status = True
-        t.eq(self.rsp.status_code, 500)
-        t.eq(self.rsp.headers.get("location"), None)
+        self.rsp.status_code |should_be.equal_to| 500
+        self.rsp.headers.get("location") |should_be.equal_to| None

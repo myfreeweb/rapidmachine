@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class g07(t.Test):
     
@@ -30,12 +31,12 @@ class g07(t.Test):
     def test_variances(self):
         self.TestResource.exists = True
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(sorted(self.rsp.vary), ["Accept", "Accept-Language", "Cookie"])
+        self.rsp.status_code |should_be.equal_to| 200
+        sorted(self.rsp.vary) |should_be.equal_to| ["Accept", "Accept-Language", "Cookie"]
 
     def test_resource_not_exists(self):
         self.TestResource.exists = False
         self.go()
-        t.eq(self.rsp.status_code, 404)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 404
+        self.rsp.response |should_be.equal_to| []
         

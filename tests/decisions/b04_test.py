@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b04(t.Test):
     
@@ -14,12 +15,12 @@ class b04(t.Test):
         self.env.data = "foo"
         self.env.headers["content-length"] = len(self.env.data)
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["yay good"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["yay good"]
 
     def test_not_ok(self):
         self.env.data = "foo" * 1024
         self.env.headers["content-length"] = len(self.env.data)
         self.go()
-        t.eq(self.rsp.status_code, 413)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 413
+        self.rsp.response |should_be.equal_to| []

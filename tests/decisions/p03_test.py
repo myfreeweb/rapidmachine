@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class p03(t.Test):
     
@@ -34,14 +35,14 @@ class p03(t.Test):
         self.env.method = "PUT"
         self.env.content_type = "text/html"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["bar"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["bar"]
     
     def test_conflict(self):
         self.TestResource.conflict = True
         self.env.method = "PUT"
         self.go()
-        t.eq(self.rsp.status_code, 409)
+        self.rsp.status_code |should_be.equal_to| 409
     
     def test_unsupported_media_type(self):
         prev = self.TestResource.accepted
@@ -50,5 +51,5 @@ class p03(t.Test):
         self.env.method = "PUT"
         self.go()
         self.TestResource.accepted = prev
-        t.eq(self.rsp.status_code, 415)
+        self.rsp.status_code |should_be.equal_to| 415
     

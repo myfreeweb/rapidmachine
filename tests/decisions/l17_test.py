@@ -1,4 +1,5 @@
 import datetime
+from should_dsl import *
 import t
 
 now = datetime.datetime.utcnow().replace(microsecond=0)
@@ -25,12 +26,12 @@ class l17(t.Test):
         self.TestResource.modified = now
         self.env.headers["if-modified-since"] = past.ctime()
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.last_modified, now)
-        t.eq(self.rsp.response, ["foo"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.last_modified |should_be.equal_to| now
+        self.rsp.response |should_be.equal_to| ["foo"]
     
     def test_modified(self):
         self.TestResource.modified = past
         self.env.headers["if-modified-since"] = now.ctime()
         self.go()
-        t.eq(self.rsp.status_code, 304)
+        self.rsp.status_code |should_be.equal_to| 304

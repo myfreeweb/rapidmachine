@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class c04(t.Test):
     
@@ -19,32 +20,32 @@ class c04(t.Test):
     def test_no_accept(self):
         # No Accept header means default to first specified.
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.content_type, "application/json")
-        t.eq(self.rsp.response, ['{"nom": "nom"}'])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.content_type |should_be.equal_to| "application/json"
+        self.rsp.response |should_be.equal_to| ['{"nom": "nom"}']
 
     def test_none_acceptable(self):
         self.env.headers["accept"] = "image/jpeg"
         self.go()
-        t.eq(self.rsp.status_code, 406)
+        self.rsp.status_code |should_be.equal_to| 406
 
     def test_json(self):
         self.env.headers["accept"] = "application/json"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.content_type, "application/json")
-        t.eq(self.rsp.response, ['{"nom": "nom"}'])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.content_type |should_be.equal_to| "application/json"
+        self.rsp.response |should_be.equal_to| ['{"nom": "nom"}']
 
     def test_xml(self):
         self.env.headers["accept"] = "text/xml"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.content_type, "text/xml")
-        t.eq(self.rsp.response, ["<nom>nom</nom>"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.content_type |should_be.equal_to| "text/xml"
+        self.rsp.response |should_be.equal_to| ["<nom>nom</nom>"]
     
     def test_choose_best(self):
         self.env.headers["accept"] = "text/xml;q=0.5, application/json;q=0.9"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.content_type, "application/json")
-        t.eq(self.rsp.response, ['{"nom": "nom"}'])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.content_type |should_be.equal_to| "application/json"
+        self.rsp.response |should_be.equal_to| ['{"nom": "nom"}']

@@ -17,6 +17,7 @@ py-bcrypt==0.2
 pyflakes==0.5.0
 pymongo==2.2
 pystache==0.5.2
+should-dsl==2.0a4
 termcolor==1.0.1
 xtraceback==0.3.3
 yanc==0.2.3

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class b03(t.Test):
     
@@ -11,20 +12,20 @@ class b03(t.Test):
 
         def to_html(self, req, rsp):
             return "Hello, world!"
-    
+
     def test_get(self):
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.headers.get("X-Noah"), None)
-        t.eq(self.rsp.response, ["Hello, world!"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.headers.get("X-Noah") |should_be.equal_to| None
+        self.rsp.response |should_be.equal_to| ["Hello, world!"]
 
     def test_options(self):
         self.env.method = "OPTIONS"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.headers["X-Noah"], "Awesome")
-        t.eq(self.rsp.response, [])
-    
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.headers["X-Noah"] |should_be.equal_to| "Awesome"
+        self.rsp.response |should_be.equal_to| []
+
     # Fairly unrelated, but no good place to put this
     def test_non_unicode_body(self):
         prev = self.TestResource.to_html
@@ -34,6 +35,5 @@ class b03(t.Test):
         self.TestResource.to_html = my_html
         self.go()
         self.TestResource.to_html = prev
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["Hi"])
-        
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["Hi"]

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class o14(t.Test):
     
@@ -28,12 +29,12 @@ class o14(t.Test):
         self.TestResource.conflict = False
         self.env.method = "PUT"
         self.go()
-        t.eq(self.rsp.status_code, 204)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 204
+        self.rsp.response |should_be.equal_to| []
     
     def test_conflict(self):
         self.TestResource.conflict = True
         self.env.method = "PUT"
         self.go()
-        t.eq(self.rsp.status_code, 409)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 409
+        self.rsp.response |should_be.equal_to| []

@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class m05(t.Test):
     
@@ -26,12 +27,12 @@ class m05(t.Test):
         self.TestResource.allow = True
         self.env.method = "POST"
         self.go()
-        t.eq(self.rsp.status_code, 200)
-        t.eq(self.rsp.response, ["processed"])
+        self.rsp.status_code |should_be.equal_to| 200
+        self.rsp.response |should_be.equal_to| ["processed"]
     
     def test_dont_allow(self):
         self.TestResource.allow = False
         self.env.method = "POST"
         self.go()
-        t.eq(self.rsp.status_code, 404)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 404
+        self.rsp.response |should_be.equal_to| []

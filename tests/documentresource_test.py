@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 try:
     import json
 except ImportError: # Python 2.5
@@ -64,47 +65,47 @@ class AppTest(t.Test):
     def test_create_valid(self):
         rsp = self.client.post("/posts", content_type="application/json",
                 data='{"title":"Hello","body":"Hello World!"}')
-        t.eq(rsp.headers["location"], "http://localhost/posts/Hello")
+        rsp.headers["location"] |should_be.equal_to| "http://localhost/posts/Hello"
 
         rsp = self.client.post("/posts/Hello/comments", content_type="application/json",
                 data='{"uid":"abc","body":"Hello World!"}')
-        t.eq(rsp.headers["location"], "http://localhost/posts/Hello/comments/abc")
+        rsp.headers["location"] |should_be.equal_to| "http://localhost/posts/Hello/comments/abc"
 
     def test_create_invalid_format(self):
         rsp = self.client.post("/posts", content_type="application/json",
                 data='{"title":Hello""body":"Hello!"')
-        t.eq(rsp.status_code, 400)
+        rsp.status_code |should_be.equal_to| 400
 
     def test_create_invalid_data(self):
         rsp = self.client.post("/posts", content_type="application/json",
                 data='{"title":"%s","body":"Hello World!"}' % ("Hello" * 128))
-        t.eq(rsp.status_code, 422)
-        t.eq(json.loads(rsp.data)["errors"], {"title": ["String value is too long"]})
+        rsp.status_code |should_be.equal_to| 422
+        json.loads(rsp.data)["errors"] |should_be.equal_to| {"title": ["String value is too long"]}
 
     def test_read_valid(self):
         rsp = self.client.get("/posts/Hello", headers=ajson)
-        t.eq(rsp.status_code, 200)
-        t.eq(json.loads(rsp.data), {"title": "Hello", "body": "Hello World!"})
+        rsp.status_code |should_be.equal_to| 200
+        json.loads(rsp.data) |should_be.equal_to| {"title": "Hello", "body": "Hello World!"}
 
         rsp = self.client.get("/posts/Hello", headers=hjson)
-        t.eq(json.loads(rsp.data), {
+        json.loads(rsp.data) |should_be.equal_to| {
             "_links": {"self": {"href": "/posts/Hello"},
                        "comments": {"href": "/posts/Hello/comments"}},
             "title": "Hello",
             "body": "Hello World!"
-        })
+        }
 
         rsp = self.client.get("/posts/Hello/comments/abc", headers=ajson)
-        t.eq(rsp.status_code, 200)
-        t.eq(json.loads(rsp.data), {"uid": "abc", "body": "Hello World!"})
+        rsp.status_code |should_be.equal_to| 200
+        json.loads(rsp.data) |should_be.equal_to| {"uid": "abc", "body": "Hello World!"}
 
     def test_read_index(self):
         rsp = self.client.get("/posts", headers=ajson)
-        t.eq(rsp.status_code, 200)
-        t.eq(json.loads(rsp.data), [{"title": "Hello", "body": "Hello World!"}])
+        rsp.status_code |should_be.equal_to| 200
+        json.loads(rsp.data) |should_be.equal_to| [{"title": "Hello", "body": "Hello World!"}]
 
         rsp = self.client.get("/posts", headers=hjson)
-        t.eq(json.loads(rsp.data), {
+        json.loads(rsp.data) |should_be.equal_to| {
             "_links": {"self": {"href": "/posts"}},
             "_embedded": {
                 "post": [
@@ -116,23 +117,23 @@ class AppTest(t.Test):
                     }
                 ]
             }
-        })
+        }
 
         rsp = self.client.get("/posts/Hello/comments", headers=ajson)
-        t.eq(rsp.status_code, 200)
-        t.eq(json.loads(rsp.data), [{"uid": "abc", "body": "Hello World!"}])
+        rsp.status_code |should_be.equal_to| 200
+        json.loads(rsp.data) |should_be.equal_to| [{"uid": "abc", "body": "Hello World!"}]
 
     def test_read_invalid(self):
         rsp = self.client.get("/posts/Goodbye", headers=ajson)
-        t.eq(rsp.status_code, 404)
+        rsp.status_code |should_be.equal_to| 404
 
         rsp = self.client.get("/posts/Hello/comments/cba", headers=ajson)
-        t.eq(rsp.status_code, 404)
+        rsp.status_code |should_be.equal_to| 404
 
     def test_read_schema(self):
         rsp = self.client.get("/posts.schema", headers=ajson)
-        t.eq(json.loads(rsp.data)["type"], "object")
-        t.eq(rsp.status_code, 200)
+        json.loads(rsp.data)["type"] |should_be.equal_to| "object"
+        rsp.status_code |should_be.equal_to| 200
 
     def test_read_paginated(self):
         for n in range(0, 11):
@@ -141,55 +142,55 @@ class AppTest(t.Test):
         # Happy cases
         rsp = self.client.get("/posts", headers=ajson)
         data = json.loads(rsp.data)
-        t.eq(len(data), 5)
-        t.eq(data[4]["body"], "HelloHelloHello")
-        t.eq(rsp.headers["link"], '<http://localhost/posts?page=2>; rel="next"')
+        len(data) |should_be.equal_to| 5
+        data[4]["body"] |should_be.equal_to| "HelloHelloHello"
+        rsp.headers["link"] |should_be.equal_to| '<http://localhost/posts?page=2>; rel="next"'
 
         rsp = self.client.get("/posts?page=2", headers=ajson)
         data = json.loads(rsp.data)
-        t.eq(len(data), 5)
-        t.eq(data[0]["body"], "HelloHelloHelloHello")
-        t.eq(rsp.headers["link"], '<http://localhost/posts?page=1>; rel="prev", <http://localhost/posts?page=3>; rel="next"')
+        len(data) |should_be.equal_to| 5
+        data[0]["body"] |should_be.equal_to| "HelloHelloHelloHello"
+        rsp.headers["link"] |should_be.equal_to| '<http://localhost/posts?page=1>; rel="prev", <http://localhost/posts?page=3>; rel="next"'
 
         rsp = self.client.get("/posts?page=3", headers=ajson)
         data = json.loads(rsp.data)
-        t.eq(rsp.headers["link"], '<http://localhost/posts?page=2>; rel="prev"')
+        rsp.headers["link"] |should_be.equal_to| '<http://localhost/posts?page=2>; rel="prev"'
 
         # Page doesn"t exist
         rsp = self.client.get("/posts?page=4", headers=ajson)
-        t.eq(rsp.status_code, 404)
+        rsp.status_code |should_be.equal_to| 404
 
         # Too much per page
         rsp = self.client.get("/posts?per_page=200", headers=ajson)
         data = json.loads(rsp.data)
-        t.eq(len(data), 5)
+        len(data) |should_be.equal_to| 5
 
     def test_update(self):
         rsp = self.client.put("/posts/Hello", content_type="application/json",
                 data='{"title":"Goodbye","body":"Goodbye World!"}')
-        t.eq(rsp.status_code, 204)
-        t.eq(mp.read_one({"title": "Goodbye"})["body"], "Goodbye World!")
-        t.eq(len(mp.read_one({"title": "Goodbye"})["comments"]), 1)
+        rsp.status_code |should_be.equal_to| 204
+        mp.read_one({"title": "Goodbye"})["body"] |should_be.equal_to| "Goodbye World!"
+        len(mp.read_one({"title": "Goodbye"})["comments"]) |should_be.equal_to| 1
 
         rsp = self.client.put("/posts/Nothing", content_type="application/json",
                 data='{"some": "thing"}')
-        t.eq(rsp.status_code, 404)
+        rsp.status_code |should_be.equal_to| 404
 
         rsp = self.client.put("/posts/Goodbye/comments/abc", content_type="application/json",
                 data='{"uid":"abc","body":"Goodbye World!"}')
-        t.eq(rsp.status_code, 204)
-        t.eq(mp.read_one({"title": "Goodbye"})["comments"][0]["body"], "Goodbye World!")
+        rsp.status_code |should_be.equal_to| 204
+        mp.read_one({"title": "Goodbye"})["comments"][0]["body"] |should_be.equal_to| "Goodbye World!"
 
     def test_delete(self):
         mp.create({"title": "Goodbye", "comments": [{"uid": "abc", "body":
             "Hello World!"}], "body": "Hello World!"})
         rsp = self.client.delete("/posts/Goodbye/comments/abc")
-        t.eq(rsp.status_code, 204)
-        t.eq(mp.read_one({"title": "Goodbye"})["comments"], [])
+        rsp.status_code |should_be.equal_to| 204
+        mp.read_one({"title": "Goodbye"})["comments"] |should_be.equal_to| []
 
         rsp = self.client.delete("/posts/Goodbye")
-        t.eq(rsp.status_code, 204)
-        t.eq(mp.read_many({"title": "Goodbye"}), [])
+        rsp.status_code |should_be.equal_to| 204
+        mp.read_many({"title": "Goodbye"}) |should_be.equal_to| []
 
         rsp = self.client.delete("/posts/Nothing")
-        t.eq(rsp.status_code, 404)
+        rsp.status_code |should_be.equal_to| 404

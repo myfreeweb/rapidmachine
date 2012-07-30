@@ -1,4 +1,5 @@
 import t
+from should_dsl import *
 
 class l05(t.Test):
     
@@ -21,12 +22,12 @@ class l05(t.Test):
     def test_not_moved(self):
         self.TestResource.moved = False
         self.go()
-        t.eq(self.rsp.status_code, 410)
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 410
+        self.rsp.response |should_be.equal_to| []
     
     def test_moved(self):
         self.TestResource.moved = "/foo"
         self.go()
-        t.eq(self.rsp.status_code, 307)
-        t.eq(self.rsp.location, "/foo")
-        t.eq(self.rsp.response, [])
+        self.rsp.status_code |should_be.equal_to| 307
+        self.rsp.location |should_be.equal_to| "/foo"
+        self.rsp.response |should_be.equal_to| []
