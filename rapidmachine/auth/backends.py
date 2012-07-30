@@ -28,7 +28,8 @@ class AuthBackend(object):
 
 class PersistenceAuthBackend(AuthBackend):
     """
-    Auth backend that gets data from a subclass of :class:`rapidmachine.persistence.Persistence`.
+    Auth backend that gets data from a subclass of
+    :class:`rapidmachine.persistence.Persistence`.
     """
 
     def __init__(self, persistence,

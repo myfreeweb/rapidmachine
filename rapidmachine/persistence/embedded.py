@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from .persistence import Persistence
 from .memory import MemoryPersistence
 
+
 class EmbeddedPersistence(Persistence):
     """
     Persistence wrapper that uses a list of embedded entries.

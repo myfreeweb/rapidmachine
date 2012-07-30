@@ -111,9 +111,8 @@ class DocumentResource(Resource):
                         delete_listfields=True) for d in self.data]
             else:
                 return self._process_data(
-                        self._get_doc_instance(self.data).to_json(encode=False),
-                        delete_listfields=True)
-
+                       self._get_doc_instance(self.data).to_json(encode=False),
+                       delete_listfields=True)
 
     def to_json(self, req, rsp):
         self.link_header(req, rsp)
@@ -302,7 +301,7 @@ class DocumentResource(Resource):
             self.raise_error(404, {"message": "Document not found"})
 
         # using the model here because some dbs (eg. hstore) are string only
-        # TODO: make optional? it's not needed with mongo even if you use datetimes
+        # TODO: make optional? not needed with mongo even if you use datetimes
         self.data = self._process_data(
                 self._get_doc_instance(self.data).to_python(),
                 delete_listfields=True)
@@ -317,6 +316,7 @@ class DocumentResource(Resource):
         "Deletes a matching object in the database."
         self.persistence.delete(req.matches)
 
+
 class EmbeddedDocumentResource(DocumentResource):
     """
     A DocumentResource for embedded lists of resources.
@@ -326,8 +326,10 @@ class EmbeddedDocumentResource(DocumentResource):
 
     * document = a `dictshield`_.document.Document
     * parent_persistence = a :class:`rapidmachine.persistence.Persistence`
-    * parent_pk = a string -- the field of the parent document that's the primary key
-    * pk = a string -- the field of the embedded document that's the primary key
+    * parent_pk = a string -- the field of the parent document
+      that's the primary key
+    * pk = a string -- the field of the embedded document
+      that's the primary key
     * field = a string -- which field of the parent document is a ListField
       that's a list of embedded documents
     * store_types = a boolean (default is False) -- whether to store
@@ -336,7 +338,6 @@ class EmbeddedDocumentResource(DocumentResource):
 
     .. _dictshield: https://github.com/j2labs/dictshield
     """
-
 
     def __init__(self, req, rsp):
         DocumentResource.__init__(self, req, rsp)

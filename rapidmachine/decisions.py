@@ -433,7 +433,7 @@ def process(klass, req, rsp):
                 state = TRANSITIONS[state][0]
             else:
                 state = TRANSITIONS[state][1]
-            if not isinstance(state, (int, types.FunctionType)):  # pragma: no cover
+            if not isinstance(state, (int, types.FunctionType)):
                 raise InternalServerError("Invalid state: %r" % state)
         rsp.status_code = state
     except FormattedHTTPException, e:

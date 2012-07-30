@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from .persistence import Persistence
 
+
 class MongoPersistence(Persistence):  # pragma: no cover
 
     "PyMongo persistence adapter"
