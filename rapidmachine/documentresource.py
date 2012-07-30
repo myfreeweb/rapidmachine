@@ -10,6 +10,7 @@ from .exceptions import FormattedHTTPException
 from .persistence import EmbeddedPersistence
 from collections import defaultdict
 from dictshield.fields.compound import ListField
+from dictshield.base import ShieldDocException
 
 
 def errors_to_dict(errors):
@@ -196,27 +197,29 @@ class DocumentResource(Resource):
         If it's valid, creates or updates an instance in the database,
         whatever is appropriate for current request.
         """
-        # screw you, dictshield
-        # y u no parse dates and stuff on .validate_class_fields?!
         try:
-            data = self._process_data(self._get_doc_instance(data).to_python())
-        except:
-            pass
-        ex = self.document.validate_class_fields(data, validate_all=True)
-        if len(ex) == 0:
             self.doc_instance = self._get_doc_instance(data)
-        else:
+            data = self._process_data(self.doc_instance.to_python())
+            self.doc_instance.validate(validate_all=True)
+            ex = []
+        except ShieldDocException as e:
+            ex = e.error_list
+        except:  # couldn't even create document instance
+            ex = self.document.validate_class_fields(data, validate_all=True)
+        if len(ex) > 0:
             self.raise_error(422, {
                 "message": "Validation Failed",
                 "errors": errors_to_dict(ex)
             })
-        data = self._process_data(self.doc_instance.to_python())
         if self.is_index:
             self.create(req, rsp, data)
         else:
             self.update(req, rsp, data)
 
     def _process_data(self, data, delete_listfields=False):
+        """
+        Removes dictshield's junk and listfields if asked.
+        """
         if not self.store_types:
             if "_types" in data:
                 del data["_types"]
