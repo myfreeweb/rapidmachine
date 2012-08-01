@@ -202,7 +202,7 @@ class DocumentResource(Resource):
             data = self._process_data(self.doc_instance.to_python())
             self.doc_instance.validate(validate_all=True)
             ex = []
-        except ShieldDocException as e:
+        except ShieldDocException, e:
             ex = e.error_list
         except:  # couldn't even create document instance
             ex = self.document.validate_class_fields(data, validate_all=True)
