@@ -4,8 +4,10 @@ try:
     import json
 except ImportError: # Python 2.5
     import simplejson as json
-from rapidmachine import App, Route, Var, \
-        DocumentResource, EmbeddedDocumentResource
+from rapidmachine import (
+    App, Route, Var,
+    DocumentResource, EmbeddedDocumentResource
+)
 from rapidmachine.persistence import MemoryPersistence
 from dictshield.document import Document, EmbeddedDocument
 from dictshield.fields import StringField

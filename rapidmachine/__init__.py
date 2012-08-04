@@ -6,8 +6,10 @@ __version__ = ".".join(map(str, version_info))
 
 try:  # pragma: no cover
     from rapidmachine.resource import Resource
-    from rapidmachine.documentresource import DocumentResource, \
-            EmbeddedDocumentResource
+    from rapidmachine.documentresource import (
+        DocumentResource,
+        EmbeddedDocumentResource
+    )
     from rapidmachine.app import App, Var, Route
     __all__ = ["__version__", "App", "Resource",
                "DocumentResource", "EmbeddedDocumentResource",
