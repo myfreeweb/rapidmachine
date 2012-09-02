@@ -15,15 +15,13 @@ class BackendsTest(t.Test):
             "username": "user",
             "password": bcrypt.encrypt("pass", rounds=4)
         })
+        self.pb = PersistenceAuthBackend(self.mp)
 
     def test_persistencebackend_valid(self):
-        pb = PersistenceAuthBackend(self.mp)
-        pb.get_user("user", "pass")["username"] |should_be.equal_to| "user"
+        self.pb.get_user("user", "pass")["username"] |should_be.equal_to| "user"
 
     def test_persistencebackend_invalid_user(self):
-        pb = PersistenceAuthBackend(self.mp)
-        pb.get_user("notuser", "wrong") |should_be.equal_to| False
+        self.pb.get_user("notuser", "wrong") |should_be.equal_to| False
 
     def test_persistencebackend_invalid_password(self):
-        pb = PersistenceAuthBackend(self.mp)
-        pb.get_user("user", "wrong") |should_be.equal_to| False
+        self.pb.get_user("user", "wrong") |should_be.equal_to| False
