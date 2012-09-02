@@ -91,10 +91,8 @@ class App(object):
         qs = URLObject("?" + env["QUERY_STRING"]).query.dict
         if "_method" in qs:
             env["REQUEST_METHOD"] = qs["_method"].upper()
-            del qs["_method"]
         if "_accept" in qs:
             env["HTTP_ACCEPT"] = qs["_accept"]
-            del qs["_accept"]
         req = self.request_class(env)
         rsp = self.dispatch_response(req)
         return rsp(env, start_rsp)
