@@ -35,7 +35,7 @@ class MemoryPersistence(Persistence):
 
     def read_one(self, query, fields=None):
         try:
-            return self.read_many(query, fields)[0]
+            return self.read_many(query, fields)[0].copy()
         except IndexError:
             return None
 

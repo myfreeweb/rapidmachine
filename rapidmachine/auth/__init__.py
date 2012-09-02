@@ -2,3 +2,4 @@
 from __future__ import absolute_import
 from .methods import AuthMethod, BasicAuthMethod
 from .backends import AuthBackend, PersistenceAuthBackend
+from .accountresource import AccountResource

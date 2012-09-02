@@ -22,7 +22,14 @@ class AuthBackend(object):
             return False
         if not self.hasher.verify(password, record[self.password_field]):
             return False
+        del record[self.password_field]
         return record
+
+    def create_user(self, username, password, data={}):
+        """
+        Creates a user with specified data.
+        """
+        raise NotImplemented()
 
     def read_user(self, username):
         """
@@ -30,16 +37,15 @@ class AuthBackend(object):
         """
         raise NotImplemented()
 
-    def update_user(self, username, new_username=None, new_password=None, fields={}):
+    def update_user(self, user, data):
         """
-        Updates the user with specified username
-        with new username, password and fields.
+        Updates the user with new data.
         """
         raise NotImplemented()
 
-    def delete_user(self, username):
+    def delete_user(self, user):
         """
-        Deletes the user with specified username.
+        Deletes the user.
         """
         raise NotImplemented()
 
@@ -59,18 +65,26 @@ class PersistenceAuthBackend(AuthBackend):
     def _q(self, username):
         return {self.username_field: username}
 
+    def _qq(self, user):
+        return self._q(user[self.username_field])
+
+    def create_user(self, username, password, data={}):
+        if self.read_user(username):
+            return False
+        d = data.copy()
+        d[self.username_field] = username
+        d[self.password_field] = self.hasher.encrypt(password)
+        return self.persistence.create(d)
+
     def read_user(self, username):
         return self.persistence.read_one(self._q(username))
 
-    def update_user(self, username, new_username=None, new_password=None, fields={}):
-        for f in [self.username_field, self.password_field]:
-            if fields[f]:
-                del fields[f]
-        if new_username:
-            fields[self.username_field] = new_username
-        if new_password:
-            fields[self.password_field] = self.hasher.encrypt(new_password)
-        return self.persistence.update(self._q(username), fields)
+    def update_user(self, user, data):
+        d = user.copy()
+        d.update(data)
+        if self.password_field in data:
+            d[self.password_field] = self.hasher.encrypt(d[self.password_field])
+        return self.persistence.update(self._qq(user), d)
 
-    def delete_user(self, username):
-        return self.persistence.delete(self._q(username))
+    def delete_user(self, user):
+        return self.persistence.delete(self._qq(user))
