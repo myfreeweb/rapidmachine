@@ -52,5 +52,3 @@ class MongoPersistence(Persistence):  # pragma: no cover
 
     def count(self):
         return self.db.count()
-
-__all__ = ["MongoPersistence"]

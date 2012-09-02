@@ -82,6 +82,3 @@ class HstorePersistence(Persistence):  # pragma: no cover
     def count(self):
         self.cur.execute("SELECT count(*) FROM %s" % self.table)
         return int(self.cur.next()[0])
-
-
-__all__ = ["HstorePersistence"]
