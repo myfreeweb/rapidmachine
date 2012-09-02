@@ -17,7 +17,7 @@ class AuthBackend(object):
         """
         return bcrypt.encrypt(password)
 
-    def verify(self, password, entered_password):
+    def verify(self, entered_password, password):
         """
         Checks if entered_password matches password.
         Uses bcrypt; to use a different hash, override this method.
@@ -49,6 +49,6 @@ class PersistenceAuthBackend(AuthBackend):
         record = self.persistence.read_one({self.username_field: username})
         if not record:
             return False
-        if not self.verify(record[self.password_field], password):
+        if not self.verify(password, record[self.password_field]):
             return False
         return record
