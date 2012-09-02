@@ -29,6 +29,30 @@ class AuthBackend(object):
         if it exists and the password is verified; otherwise,
         returns False.
         """
+        record = self.read_user(username)
+        if not record:
+            return False
+        if not self.verify(password, record[self.password_field]):
+            return False
+        return record
+
+    def read_user(self, username):
+        """
+        Returns the user with specified username.
+        """
+        raise NotImplemented()
+
+    def update_user(self, username, new_username=None, new_password=None, fields={}):
+        """
+        Updates the user with specified username
+        with new username, password and fields.
+        """
+        raise NotImplemented()
+
+    def delete_user(self, username):
+        """
+        Deletes the user with specified username.
+        """
         raise NotImplemented()
 
 
@@ -44,10 +68,21 @@ class PersistenceAuthBackend(AuthBackend):
         self.username_field = username_field
         self.password_field = password_field
 
-    def get_user(self, username, password):
-        record = self.persistence.read_one({self.username_field: username})
-        if not record:
-            return False
-        if not self.verify(password, record[self.password_field]):
-            return False
-        return record
+    def _q(self, username):
+        return {self.username_field: username}
+
+    def read_user(self, username):
+        return self.persistence.read_one(self._q(username))
+
+    def update_user(self, username, new_username=None, new_password=None, fields={}):
+        for f in [self.username_field, self.password_field]:
+            if fields[f]:
+                del fields[f]
+        if new_username:
+            fields[self.username_field] = new_username
+        if new_password:
+            fields[self.password_field] = self.encrypt(new_password)
+        return self.persistence.update(self._q(username), fields)
+
+    def delete_user(self, username):
+        return self.persistence.delete(self._q(username))
