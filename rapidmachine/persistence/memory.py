@@ -7,8 +7,10 @@ class MemoryPersistence(Persistence):
 
     "In-memory list persistence adapter"
 
-    def __init__(self, db=[]):
+    def __init__(self, db=None):
         self.db = db
+        if not db:
+            self.db = []
 
     def matches(self, d, query):
         for key, qval in query.iteritems():
