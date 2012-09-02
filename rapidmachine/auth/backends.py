@@ -10,6 +10,13 @@ class AuthBackend(object):
     Use one of its subclasses or make your own.
     """
 
+    def encrypt(self, password):
+        """
+        Hashes the password.
+        Uses bcrypt; to use a different hash, override this method.
+        """
+        return bcrypt.encrypt(password)
+
     def verify(self, password, entered_password):
         """
         Checks if entered_password matches password.
