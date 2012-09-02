@@ -6,7 +6,6 @@ class AuthBackend(object):
     """
     Basic auth backend.
 
-    All methods here (except __init__ and verify) just raise NotImplemented.
     Use one of its subclasses or make your own.
     """
 
