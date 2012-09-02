@@ -33,7 +33,7 @@ class TestOverrideRes(Resource):
 class TestApp(App):
     handlers = [
         Route("test").to(TestOverrideRes),
-        Route("test_int", Var("world", int)).to(TestRes),
+        Route("test_int", Var("world", int)) >> TestRes,
         Route("test_str", Var("world", str)).to(TestRes)
     ]
 

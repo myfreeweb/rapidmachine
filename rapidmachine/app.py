@@ -25,6 +25,8 @@ class Route(object):
     def to(self, res):
         return {"route": self.route, "res": res}
 
+    __rshift__ = to
+
 
 def match(route, path):
     "Match a path against a route. Returns a dict of values or False."

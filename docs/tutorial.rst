@@ -54,11 +54,18 @@ Variables can have types.
 For example, this matches `/posts` and `/posts/123` but not `/posts/hello`::
 
     handlers = [
-        Route("posts").to(PostResource)
+        Route("posts").to(PostResource),
         Route("posts", Var("id", int)).to(PostResource)
     ]
 
 And in your resource's methods, `req.matches["id"]` will be `123` (an int) if you request `/posts/123`.
+
+Also, you can use the hipster syntax::
+
+    handlers = [
+        Route("posts") >> PostResource,
+        Route("posts", Var("id", int)) >> PostResource
+    ]
 
 Writing Resources
 -----------------
