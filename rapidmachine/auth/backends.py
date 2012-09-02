@@ -8,20 +8,8 @@ class AuthBackend(object):
 
     Use one of its subclasses or make your own.
     """
-
-    def encrypt(self, password):
-        """
-        Hashes the password.
-        Uses bcrypt; to use a different hash, override this method.
-        """
-        return bcrypt.encrypt(password)
-
-    def verify(self, entered_password, password):
-        """
-        Checks if entered_password matches password.
-        Uses bcrypt; to use a different hash, override this method.
-        """
-        return bcrypt.verify(entered_password, password)
+    
+    hasher = bcrypt
 
     def get_user(self, username, password):
         """
@@ -32,7 +20,7 @@ class AuthBackend(object):
         record = self.read_user(username)
         if not record:
             return False
-        if not self.verify(password, record[self.password_field]):
+        if not self.hasher.verify(password, record[self.password_field]):
             return False
         return record
 
@@ -81,7 +69,7 @@ class PersistenceAuthBackend(AuthBackend):
         if new_username:
             fields[self.username_field] = new_username
         if new_password:
-            fields[self.password_field] = self.encrypt(new_password)
+            fields[self.password_field] = self.hasher.encrypt(new_password)
         return self.persistence.update(self._q(username), fields)
 
     def delete_user(self, username):
